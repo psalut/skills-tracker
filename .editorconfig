@@ -1,13 +1,50 @@
-# Editor configuration, see http://editorconfig.org
+# ================================
+# EditorConfig
+# ================================
 root = true
 
+# ================================
+# Global defaults
+# ================================
 [*]
 charset = utf-8
+end_of_line = lf
 indent_style = space
 indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# ================================
+# Markdown
+# ================================
 [*.md]
 max_line_length = off
 trim_trailing_whitespace = false
+
+# ================================
+# JSON (package.json, tsconfig, etc.)
+# ================================
+[*.json]
+indent_size = 2
+
+# ================================
+# YAML (GitHub Actions, etc.)
+# ================================
+[*.yml]
+indent_size = 2
+
+[*.yaml]
+indent_size = 2
+
+# ================================
+# Prisma schema
+# ================================
+[*.prisma]
+indent_size = 2
+
+# ================================
+# Shell scripts
+# ================================
+[*.sh]
+indent_style = space
+indent_size = 2

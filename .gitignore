@@ -1,14 +1,58 @@
-# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# ================================
+# Compiled output
+# ================================
+dist/
+tmp/
+out-tsc/
+build/
+coverage/
 
-# compiled output
-dist
-tmp
-out-tsc
+# ================================
+# Dependencies
+# ================================
+node_modules/
 
-# dependencies
-node_modules
+# ================================
+# Nx
+# ================================
+.nx/cache
+.nx/workspace-data
 
-# IDEs and editors
+# ================================
+# Angular
+# ================================
+.angular/
+.cache/
+*.tsbuildinfo
+
+# ================================
+# Prisma / Database
+# ================================
+apps/api/prisma/dev.db
+apps/api/prisma/*.db
+apps/api/prisma/*.db-journal
+
+# ================================
+# Environment variables
+# ================================
+.env
+.env.*
+!.env.example
+
+# ================================
+# Logs
+# ================================
+logs/
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+testem.log
+/libpeerconnection.log
+
+# ================================
+# IDEs and Editors
+# ================================
 /.idea
 .project
 .classpath
@@ -17,30 +61,23 @@ node_modules
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
+# VSCode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# misc
+# ================================
+# Misc
+# ================================
 /.sass-cache
 /connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
 /typings
+__screenshots__/
 
-# System Files
+# ================================
+# OS Files
+# ================================
 .DS_Store
 Thumbs.db
-
-.nx/cache
-.nx/workspace-data
-
-.angular
-
-__screenshots__/
