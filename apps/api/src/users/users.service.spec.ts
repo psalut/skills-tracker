@@ -71,7 +71,9 @@ describe('UsersService', () => {
       createdAt: created.createdAt,
       updatedAt: created.updatedAt,
     });
-    expect((result as unknown as { password?: unknown }).password).toBeUndefined();
+    expect(
+      (result as unknown as { password?: unknown }).password,
+    ).toBeUndefined();
   });
 
   it('throws ConflictException on unique email (P2002)', async () => {
