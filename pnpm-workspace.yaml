@@ -1,1 +1,3 @@
-autoInstallPeers: true
+packages:
+  - apps/*
+  - packages/*
