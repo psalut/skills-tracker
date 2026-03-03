@@ -9,7 +9,7 @@
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,md,html,css,scss,yml,yaml}": "prettier --write"
+    "*.{ts,tsx,js,jsx,json,md,html,css,scss,yml,yaml}": "prettier --write --ignore-path .prettierignore"
   },
   "private": true,
   "dependencies": {
