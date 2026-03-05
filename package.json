@@ -21,6 +21,7 @@
     "@angular/router": "~21.1.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.0.0",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "7.4.2",
