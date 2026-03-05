@@ -177,3 +177,5 @@ desarrollo fullstack.
 ## 📄 Licencia
 
 Uso personal / educativo.
+
+CI check registered
