@@ -9,7 +9,10 @@ import { Prisma } from '@prisma/client';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter implements ExceptionFilter {
-  catch(exception: Prisma.PrismaClientKnownRequestError, _host: ArgumentsHost): void {
+  catch(
+    exception: Prisma.PrismaClientKnownRequestError,
+    _host: ArgumentsHost,
+  ): void {
     switch (exception.code) {
       case 'P2002': {
         // Unique constraint violation

@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import type { User } from '@prisma/client';
 import { Prisma } from '@prisma/client';
@@ -38,7 +38,10 @@ describe('UsersService', () => {
     jest.clearAllMocks();
 
     const moduleRef = await Test.createTestingModule({
-      providers: [UsersService, { provide: PrismaService, useValue: prismaMock }],
+      providers: [
+        UsersService,
+        { provide: PrismaService, useValue: prismaMock },
+      ],
     }).compile();
 
     service = moduleRef.get(UsersService);
@@ -95,7 +98,9 @@ describe('UsersService', () => {
     it('throws ConflictException "Email already exists" on unique violation (P2002) when conflict field can be resolved (B2)', async () => {
       (bcrypt.hash as unknown as jest.Mock).mockResolvedValue('hashed_123');
 
-      prismaMock.user.create.mockRejectedValue(prismaKnownError('P2002', { modelName: 'User' }));
+      prismaMock.user.create.mockRejectedValue(
+        prismaKnownError('P2002', { modelName: 'User' }),
+      );
 
       // B2: resolveUniqueConflict -> prisma.user.findFirst({ where: { email } })
       prismaMock.user.findFirst.mockResolvedValue({ id: 'existing-id' });
@@ -122,7 +127,9 @@ describe('UsersService', () => {
     it('throws ConflictException "Unique constraint violation" on P2002 when it cannot resolve which field conflicted (B2 fallback)', async () => {
       (bcrypt.hash as unknown as jest.Mock).mockResolvedValue('hashed_123');
 
-      prismaMock.user.create.mockRejectedValue(prismaKnownError('P2002', { modelName: 'User' }));
+      prismaMock.user.create.mockRejectedValue(
+        prismaKnownError('P2002', { modelName: 'User' }),
+      );
 
       // No encuentra conflicto por DB (raro, pero posible)
       prismaMock.user.findFirst.mockResolvedValue(null);
@@ -172,7 +179,9 @@ describe('UsersService', () => {
 
       const result = await service.findById('u1');
 
-      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({ where: { id: 'u1' } });
+      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
+        where: { id: 'u1' },
+      });
       expect((result as { password?: unknown }).password).toBeUndefined();
       expect(result.id).toBe('u1');
     });
@@ -180,7 +189,9 @@ describe('UsersService', () => {
     it('throws NotFoundException when user does not exist', async () => {
       prismaMock.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.findById('missing')).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.findById('missing')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
     });
   });
 
@@ -222,7 +233,9 @@ describe('UsersService', () => {
 
   describe('update', () => {
     it('throws BadRequestException when dto is empty', async () => {
-      await expect(service.update('u1', {})).rejects.toBeInstanceOf(BadRequestException);
+      await expect(service.update('u1', {})).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
     });
 
     it('updates allowed fields and returns public user', async () => {
@@ -265,7 +278,9 @@ describe('UsersService', () => {
     });
 
     it('throws ConflictException "Email already exists" on P2002 when conflict field can be resolved (B2)', async () => {
-      prismaMock.user.update.mockRejectedValue(prismaKnownError('P2002', { modelName: 'User' }));
+      prismaMock.user.update.mockRejectedValue(
+        prismaKnownError('P2002', { modelName: 'User' }),
+      );
 
       prismaMock.user.findFirst.mockResolvedValue({ id: 'other-user' });
 
@@ -286,7 +301,9 @@ describe('UsersService', () => {
     });
 
     it('throws ConflictException "Unique constraint violation" on P2002 when cannot resolve conflict field (B2 fallback)', async () => {
-      prismaMock.user.update.mockRejectedValue(prismaKnownError('P2002', { modelName: 'User' }));
+      prismaMock.user.update.mockRejectedValue(
+        prismaKnownError('P2002', { modelName: 'User' }),
+      );
       prismaMock.user.findFirst.mockResolvedValue(null);
 
       await expect(

@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -30,7 +35,10 @@ export class UsersService {
 
       return this.toPublic(user);
     } catch (err: unknown) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
         const field = await this.resolveUniqueConflict({ email: dto.email });
 
         if (field === 'email') {
@@ -67,8 +75,14 @@ export class UsersService {
       });
       return this.toPublic(user);
     } catch (err: unknown) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-        const field = await this.resolveUniqueConflict({ email: dto.email }, id);
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        const field = await this.resolveUniqueConflict(
+          { email: dto.email },
+          id,
+        );
 
         if (field === 'email') {
           throw new ConflictException('Email already exists');
@@ -76,7 +90,8 @@ export class UsersService {
         throw new ConflictException('Unique constraint violation');
       }
 
-      if (this.isNotFoundError(err)) throw new NotFoundException('User not found');
+      if (this.isNotFoundError(err))
+        throw new NotFoundException('User not found');
       throw err;
     }
   }
