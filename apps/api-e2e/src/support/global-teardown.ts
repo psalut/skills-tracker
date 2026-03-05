@@ -1,10 +1,48 @@
-import { killPort } from '@nx/node/utils';
+import { existsSync, readFileSync, unlinkSync } from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+
 /* eslint-disable */
 
+const REPO_ROOT = path.resolve(__dirname, '../../../..');
+const pidFile = path.join(REPO_ROOT, 'tmp-api-e2e.pid');
+
+function killPid(pid: number): void {
+  if (!Number.isFinite(pid) || pid <= 0) return;
+
+  const isWin = process.platform === 'win32';
+
+  if (isWin) {
+    // /T = mata árbol, /F = force
+    spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], {
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+  } else {
+    try {
+      process.kill(pid, 'SIGTERM');
+    } catch {
+      // ignore
+    }
+  }
+}
+
 module.exports = async function () {
-  // Put clean up logic here (e.g. stopping services, docker-compose, etc.).
-  // Hint: `globalThis` is shared between setup and teardown.
-  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-  await killPort(port);
-  console.log(globalThis.__TEARDOWN_MESSAGE__);
+  if (globalThis.__TEARDOWN_MESSAGE__) {
+    // eslint-disable-next-line no-console
+    console.log(globalThis.__TEARDOWN_MESSAGE__);
+  }
+
+  if (!existsSync(pidFile)) return;
+
+  const raw = readFileSync(pidFile, 'utf-8').trim();
+  const pid = Number(raw);
+
+  killPid(pid);
+
+  try {
+    unlinkSync(pidFile);
+  } catch {
+    // ignore
+  }
 };
