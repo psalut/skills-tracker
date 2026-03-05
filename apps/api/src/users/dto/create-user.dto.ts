@@ -1,6 +1,5 @@
 import {
   IsEmail,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -8,16 +7,21 @@ import {
 
 export class CreateUserDto {
   @IsEmail()
+  @MaxLength(254)
   email!: string;
 
-  @IsOptional()
   @IsString()
-  @MinLength(2)
-  @MaxLength(80)
-  name?: string;
+  @MinLength(8)
+  @MaxLength(72) // recomendado para bcrypt (antes de hash)
+  password!: string;
 
   @IsString()
-  @MinLength(6)
-  @MaxLength(72)
-  password!: string;
+  @MinLength(2)
+  @MaxLength(50)
+  firstName!: string;
+
+  @IsString()
+  @MinLength(2)
+  @MaxLength(50)
+  lastName!: string;
 }
