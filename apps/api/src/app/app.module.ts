@@ -13,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     PrismaModule,
     UsersModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

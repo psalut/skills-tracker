@@ -63,7 +63,9 @@ describe('Users API (e2e)', () => {
 
   it('PATCH /users/:id should update user with valid token', async () => {
     const res = await axios.patch(
-      `/users/${userId}`, {firstName: 'Updated'}, authHeaders(),
+      `/users/${userId}`,
+      { firstName: 'Updated' },
+      authHeaders(),
     );
 
     expect(res.status).toBe(200);
@@ -77,5 +79,3 @@ describe('Users API (e2e)', () => {
     expect(res.status).toBe(404);
   });
 });
-
-

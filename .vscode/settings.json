@@ -1,9 +1,3 @@
 {
-  "conventionalCommits.scopes": [
-    "repo",
-    "ci",
-    "users",
-    "e2e",
-    "auth"
-  ]
+  "conventionalCommits.scopes": ["repo", "ci", "users", "e2e", "auth"]
 }
