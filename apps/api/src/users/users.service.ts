@@ -7,10 +7,10 @@ import {
 import type { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import type { UserPublic } from './users.types';
 import { Prisma } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RegisterDto } from '../auth/dto/register.dto';
 
 const UNIQUE_USER_FIELDS = ['email'] as const;
 // cuando agregues username: ['email', 'username'] as const
@@ -20,7 +20,7 @@ type UniqueUserField = (typeof UNIQUE_USER_FIELDS)[number];
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateUserDto): Promise<UserPublic> {
+  async create(dto: RegisterDto): Promise<UserPublic> {
     try {
       const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -54,6 +54,12 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     return this.toPublic(user);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
   }
 
   async findMany(): Promise<UserPublic[]> {

@@ -195,6 +195,40 @@ describe('UsersService', () => {
     });
   });
 
+  describe('findByEmail', () => {
+    it('returns full user when found', async () => {
+      const found: User = {
+        id: 'u1',
+        email: 'a@mail.com',
+        firstName: 'A',
+        lastName: 'B',
+        password: 'hashed',
+        createdAt: new Date('2026-03-02T20:00:00.000Z'),
+        updatedAt: new Date('2026-03-02T20:00:00.000Z'),
+      };
+
+      prismaMock.user.findUnique.mockResolvedValue(found);
+
+      const result = await service.findByEmail('a@mail.com');
+
+      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
+        where: { email: 'a@mail.com' },
+      });
+      expect(result).toEqual(found);
+    });
+
+    it('returns null when user does not exist', async () => {
+      prismaMock.user.findUnique.mockResolvedValue(null);
+
+      const result = await service.findByEmail('missing@mail.com');
+
+      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
+        where: { email: 'missing@mail.com' },
+      });
+      expect(result).toBeNull();
+    });
+  });
+
   describe('findMany', () => {
     it('returns users public list ordered by createdAt desc', async () => {
       const u1: User = {
