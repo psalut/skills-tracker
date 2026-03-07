@@ -7,11 +7,71 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  firstName String
-  lastName  String
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String       @id @default(cuid())
+  email      String       @unique
+  firstName  String
+  lastName   String
+  password   String
+  userSkills UserSkill[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum SkillCategory {
+  FRONTEND
+  BACKEND
+  DEVOPS
+  DATABASE
+  TESTING
+  SOFT_SKILL
+  LANGUAGE
+  TOOLING
+  OTHER
+}
+
+model Skill {
+  id            String        @id @default(cuid())
+  name          String
+  description   String?
+  level         SkillLevel?
+  category      SkillCategory @default(OTHER)
+  parentSkillId String?
+  isActive      Boolean       @default(true)
+
+  parentSkill   Skill?        @relation("SkillToSubskills", fields: [parentSkillId], references: [id], onDelete: SetNull)
+  subSkills     Skill[]       @relation("SkillToSubskills")
+  userSkills    UserSkill[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  @@index([parentSkillId])
+  @@unique([name, parentSkillId])
+}
+
+model UserSkill {
+  id           String      @id @default(cuid())
+  userId       String
+  skillId      String
+  currentLevel SkillLevel?
+  targetLevel  SkillLevel?
+  notes        String?
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill        Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([userId, skillId])
+  @@index([userId])
+  @@index([skillId])
 }

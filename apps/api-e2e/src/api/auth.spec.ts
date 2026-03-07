@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { resetDatabase } from '../support/reset-database';
 
 axios.defaults.baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3333';
 axios.defaults.validateStatus = () => true;
@@ -6,6 +7,10 @@ axios.defaults.validateStatus = () => true;
 describe('Auth API (e2e)', () => {
   const email = 'auth-e2e@mail.com';
   const password = '12345678';
+
+  beforeAll(async () => {
+    await resetDatabase();
+  });
 
   it('POST /auth/register should create a user', async () => {
     const res = await axios.post('/auth/register', {
