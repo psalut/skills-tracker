@@ -54,7 +54,6 @@ model Skill {
   deletedAt     DateTime?
 
   @@index([parentSkillId])
-  @@unique([name, parentSkillId])
 }
 
 model UserSkill {
