@@ -13,7 +13,6 @@
     "prisma:reset:test": "cross-env NODE_ENV=test pnpm exec prisma migrate reset",
     "prisma:migrate:prod": "cross-env NODE_ENV=production pnpm exec prisma migrate deploy",
     "prisma:reset:prod": "cross-env NODE_ENV=production pnpm exec prisma migrate reset"
-
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,md,html,css,scss,yml,yaml}": "prettier --write --ignore-path .prettierignore"

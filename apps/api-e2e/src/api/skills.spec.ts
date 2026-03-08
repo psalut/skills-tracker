@@ -174,25 +174,21 @@ describe('Skills API (e2e)', () => {
     );
   });
 
-  it(
-    'PATCH /skills/:id/restore should restore a soft-deleted skill',
-    async () => {
-      const created = await axios.post('/skills', {
-        name: 'NestJS',
-      });
+  it('PATCH /skills/:id/restore should restore a soft-deleted skill', async () => {
+    const created = await axios.post('/skills', {
+      name: 'NestJS',
+    });
 
-      await axios.delete(`/skills/${created.data.id}`);
+    await axios.delete(`/skills/${created.data.id}`);
 
-      const response = await axios.patch(`/skills/${created.data.id}/restore`);
+    const response = await axios.patch(`/skills/${created.data.id}/restore`);
 
-      expect(response.status).toBe(200);
-      expect(response.data.id).toBe(created.data.id);
+    expect(response.status).toBe(200);
+    expect(response.data.id).toBe(created.data.id);
 
-      const getResponse = await axios.get(`/skills/${created.data.id}`);
-      expect(getResponse.status).toBe(200);
-    },
-    15000,
-  );
+    const getResponse = await axios.get(`/skills/${created.data.id}`);
+    expect(getResponse.status).toBe(200);
+  }, 15000);
 
   it('PATCH /skills/:id/restore should return 400 if parent is deleted', async () => {
     const parent = await axios.post('/skills', {
