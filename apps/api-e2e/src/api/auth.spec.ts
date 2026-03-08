@@ -1,13 +1,16 @@
 import axios from 'axios';
-
-axios.defaults.baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3333';
-axios.defaults.validateStatus = () => true;
+import { resetDatabase } from '../support/reset-database';
 
 describe('Auth API (e2e)', () => {
-  const email = 'auth-e2e@mail.com';
   const password = '12345678';
 
+  beforeAll(async () => {
+    await resetDatabase();
+  });
+
   it('POST /auth/register should create a user', async () => {
+    const email = `auth-register-${Date.now()}@mail.com`;
+
     const res = await axios.post('/auth/register', {
       email,
       password,
@@ -22,6 +25,15 @@ describe('Auth API (e2e)', () => {
   });
 
   it('POST /auth/register should reject duplicate email', async () => {
+    const email = `auth-duplicate-${Date.now()}@mail.com`;
+
+    await axios.post('/auth/register', {
+      email,
+      password,
+      firstName: 'Auth',
+      lastName: 'E2E',
+    });
+
     const res = await axios.post('/auth/register', {
       email,
       password,
@@ -42,6 +54,15 @@ describe('Auth API (e2e)', () => {
   });
 
   it('POST /auth/login should return access token', async () => {
+    const email = `auth-login-${Date.now()}@mail.com`;
+
+    await axios.post('/auth/register', {
+      email,
+      password,
+      firstName: 'Auth',
+      lastName: 'E2E',
+    });
+
     const res = await axios.post('/auth/login', {
       email,
       password,
@@ -53,6 +74,15 @@ describe('Auth API (e2e)', () => {
   });
 
   it('POST /auth/login should reject invalid credentials', async () => {
+    const email = `auth-invalid-${Date.now()}@mail.com`;
+
+    await axios.post('/auth/register', {
+      email,
+      password,
+      firstName: 'Auth',
+      lastName: 'E2E',
+    });
+
     const res = await axios.post('/auth/login', {
       email,
       password: 'wrongpass',
@@ -62,10 +92,21 @@ describe('Auth API (e2e)', () => {
   });
 
   it('GET /auth/me should return current user with valid token', async () => {
+    const email = `auth-me-${Date.now()}@mail.com`;
+
+    await axios.post('/auth/register', {
+      email,
+      password,
+      firstName: 'Auth',
+      lastName: 'E2E',
+    });
+
     const loginRes = await axios.post('/auth/login', {
       email,
       password,
     });
+
+    expect(loginRes.status).toBe(201);
 
     const token = loginRes.data.accessToken;
 

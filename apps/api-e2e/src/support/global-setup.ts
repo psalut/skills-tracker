@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { writeFileSync, existsSync } from 'node:fs';
+import { writeFileSync, existsSync, readFileSync, unlinkSync } from 'node:fs';
 import path from 'node:path';
 import { waitForPortOpen } from '@nx/node/utils';
 import dotenv from 'dotenv';
@@ -9,11 +9,13 @@ import { resetDatabase } from './reset-database';
 
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
 const ENV_PATH = path.join(REPO_ROOT, '.env.test');
+const PID_FILE = path.join(REPO_ROOT, 'tmp-api-e2e.pid');
 
 function loadTestEnv(): void {
   if (!existsSync(ENV_PATH)) {
     throw new Error(`Missing .env.test at: ${ENV_PATH}`);
   }
+
   dotenv.config({ path: ENV_PATH });
 
   if (!process.env.DATABASE_URL) {
@@ -39,18 +41,50 @@ function assertTestDatabaseUrl(): void {
     );
   }
 
-  const actualHost = parsed.host;
-
-  // match exacto (sin “includes”)
-  if (actualHost !== expectedHost) {
+  if (parsed.host !== expectedHost) {
     throw new Error(
-      `Refusing to run e2e: DATABASE_URL host mismatch.\nExpected: ${expectedHost}\nActual:   ${actualHost}`,
+      `Refusing to run e2e: DATABASE_URL host mismatch.\nExpected: ${expectedHost}\nActual:   ${parsed.host}`,
     );
   }
 }
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+function killPreviousE2EProcess(): void {
+  if (!existsSync(PID_FILE)) return;
+
+  const raw = readFileSync(PID_FILE, 'utf-8').trim();
+  const pid = Number(raw);
+
+  if (!Number.isFinite(pid) || pid <= 0) {
+    try {
+      unlinkSync(PID_FILE);
+    } catch {
+      // ignore
+    }
+    return;
+  }
+
+  if (process.platform === 'win32') {
+    spawnSync('cmd.exe', ['/c', 'taskkill', '/PID', String(pid), '/T', '/F'], {
+      stdio: 'ignore',
+      windowsHide: true,
+    });
+  } else {
+    try {
+      process.kill(pid, 'SIGTERM');
+    } catch {
+      // ignore
+    }
+  }
+
+  try {
+    unlinkSync(PID_FILE);
+  } catch {
+    // ignore
+  }
 }
 
 function runMigrationsOnce(): void {
@@ -74,7 +108,6 @@ function runMigrationsOnce(): void {
           windowsHide: true,
           env: {
             ...process.env,
-            // Direct para migraciones
             DATABASE_URL:
               process.env.DATABASE_DIRECT_URL ?? process.env.DATABASE_URL,
           },
@@ -110,13 +143,13 @@ function runMigrationsOnce(): void {
 
 async function runMigrationsWithRetry(): Promise<void> {
   const attempts = 3;
+
   for (let i = 1; i <= attempts; i++) {
     try {
       runMigrationsOnce();
       return;
-    } catch (e) {
-      if (i === attempts) throw e;
-      // backoff: 1s, 2s
+    } catch (error) {
+      if (i === attempts) throw error;
       await sleep(1000 * i);
     }
   }
@@ -125,6 +158,7 @@ async function runMigrationsWithRetry(): Promise<void> {
 module.exports = async function () {
   loadTestEnv();
   assertTestDatabaseUrl();
+  killPreviousE2EProcess();
 
   const host = process.env.HOST ?? '127.0.0.1';
   const port = process.env.PORT ? Number(process.env.PORT) : 3333;
@@ -135,39 +169,35 @@ module.exports = async function () {
   const isWin = process.platform === 'win32';
 
   const child = isWin
-    ? spawn('cmd.exe', ['/c', 'pnpm', 'nx', 'serve', 'api'], {
+    ? spawn('cmd.exe', ['/c', 'node', 'dist/api/main.js'], {
         cwd: REPO_ROOT,
         stdio: 'inherit',
         env: {
           ...process.env,
           NODE_ENV: 'test',
           DATABASE_URL: process.env.DATABASE_URL,
-          DOTENV_CONFIG_PATH: ENV_PATH,
           HOST: host,
           PORT: String(port),
         },
         windowsHide: true,
       })
-    : spawn('pnpm', ['nx', 'serve', 'api'], {
+    : spawn('node', ['dist/api/main.js'], {
         cwd: REPO_ROOT,
         stdio: 'inherit',
         env: {
           ...process.env,
           NODE_ENV: 'test',
           DATABASE_URL: process.env.DATABASE_URL,
-          DOTENV_CONFIG_PATH: ENV_PATH,
           HOST: host,
           PORT: String(port),
         },
       });
 
-  const pidFile = path.join(REPO_ROOT, 'tmp-api-e2e.pid');
-
   if (!child.pid) {
     throw new Error('API process started but PID is undefined');
   }
 
-  writeFileSync(pidFile, String(child.pid), { encoding: 'utf-8' });
+  writeFileSync(PID_FILE, String(child.pid), { encoding: 'utf-8' });
 
   await waitForPortOpen(port, { host, retries: 120, retryDelay: 250 });
 

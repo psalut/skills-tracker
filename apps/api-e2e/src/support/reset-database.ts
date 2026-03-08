@@ -2,13 +2,12 @@ import pg from 'pg';
 const { Client } = pg;
 
 export async function resetDatabase(): Promise<void> {
-  const connectionString =
-    process.env.DATABASE_DIRECT_URL ?? process.env.DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error('DATABASE_URL is missing');
 
   const client = new Client({
     connectionString,
-    ssl: { rejectUnauthorized: false }, // <-- Neon
+    ssl: { rejectUnauthorized: false },
   });
 
   await client.connect();

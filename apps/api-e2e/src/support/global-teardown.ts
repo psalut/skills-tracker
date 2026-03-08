@@ -28,11 +28,6 @@ function killPid(pid: number): void {
 }
 
 module.exports = async function () {
-  if (globalThis.__TEARDOWN_MESSAGE__) {
-    // eslint-disable-next-line no-console
-    console.log(globalThis.__TEARDOWN_MESSAGE__);
-  }
-
   if (!existsSync(pidFile)) return;
 
   const raw = readFileSync(pidFile, 'utf-8').trim();
