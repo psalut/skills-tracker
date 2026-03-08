@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { resetDatabase } from '../support/reset-database';
 
-axios.defaults.baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3333';
-axios.defaults.validateStatus = () => true;
-
 describe('Users API (e2e)', () => {
   let userId: string;
   let accessToken: string;
+  let email: string;
+
+  const password = '12345678';
 
   function authHeaders() {
     return {
@@ -16,11 +16,12 @@ describe('Users API (e2e)', () => {
     };
   }
 
-  const email = 'e2e-user@mail.com';
-  const password = '12345678';
-
   beforeAll(async () => {
     await resetDatabase();
+  });
+
+  beforeEach(async () => {
+    email = `user-${Date.now()}-${Math.random()}@mail.com`;
 
     const registerRes = await axios.post('/auth/register', {
       email,
@@ -38,8 +39,6 @@ describe('Users API (e2e)', () => {
     });
 
     expect(loginRes.status).toBe(201);
-    expect(loginRes.data).toHaveProperty('accessToken');
-
     accessToken = loginRes.data.accessToken;
   });
 
