@@ -6,6 +6,7 @@
     "e2e",
     "auth",
     "api",
-    "skills"
+    "skills",
+    "prisma"
   ]
 }

@@ -2,13 +2,15 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { defineConfig, env } from 'prisma/config';
 
-// Cargar env explícitamente (evita el log "injecting env (0)")
-const envFile =
-  process.env.NODE_ENV === 'test'
-    ? path.resolve(process.cwd(), '.env.test')
-    : path.resolve(process.cwd(), '.env');
+const environment = process.env.NODE_ENV ?? 'development';
 
-// dotenv NO pisa variables existentes por defecto
+const envFile =
+  environment === 'test'
+    ? path.resolve(process.cwd(), '.env.test')
+    : environment === 'production'
+      ? path.resolve(process.cwd(), '.env.prod')
+      : path.resolve(process.cwd(), '.env');
+
 dotenv.config({ path: envFile });
 
 export default defineConfig({
