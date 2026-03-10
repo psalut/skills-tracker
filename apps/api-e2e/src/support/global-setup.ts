@@ -16,7 +16,7 @@ function loadTestEnv(): void {
     throw new Error(`Missing .env.test at: ${ENV_PATH}`);
   }
 
-  dotenv.config({ path: ENV_PATH });
+  dotenv.config({ path: ENV_PATH, override: true });
 
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is missing after loading .env.test');

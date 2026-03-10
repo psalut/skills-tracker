@@ -1,4 +1,4 @@
-import { SkillCategory, SkillLevel } from '@prisma/client';
+import { SkillCategory } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
@@ -25,15 +25,6 @@ export class CreateSkillDto {
   @IsOptional()
   @IsString()
   description?: string;
-
-  @ApiPropertyOptional({
-    description: 'Current general level assigned to the skill',
-    enum: SkillLevel,
-    example: SkillLevel.INTERMEDIATE,
-  })
-  @IsOptional()
-  @IsEnum(SkillLevel)
-  level?: SkillLevel;
 
   @ApiPropertyOptional({
     description: 'Skill category',
