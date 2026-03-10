@@ -67,8 +67,8 @@ export class UserSkillsService {
             firstName: true,
             lastName: true,
             createdAt: true,
-            updatedAt: true
-          }
+            updatedAt: true,
+          },
         },
         skill: true,
       },
@@ -85,8 +85,8 @@ export class UserSkillsService {
             firstName: true,
             lastName: true,
             createdAt: true,
-            updatedAt: true
-          }
+            updatedAt: true,
+          },
         },
         skill: true,
       },
@@ -107,8 +107,8 @@ export class UserSkillsService {
             firstName: true,
             lastName: true,
             createdAt: true,
-            updatedAt: true
-          }
+            updatedAt: true,
+          },
         },
         skill: true,
       },
@@ -161,8 +161,8 @@ export class UserSkillsService {
             firstName: true,
             lastName: true,
             createdAt: true,
-            updatedAt: true
-          }
+            updatedAt: true,
+          },
         },
         skill: true,
       },
