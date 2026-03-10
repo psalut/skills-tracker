@@ -7,14 +7,14 @@ datasource db {
 }
 
 model User {
-  id         String       @id @default(cuid())
-  email      String       @unique
+  id         String      @id @default(cuid())
+  email      String      @unique
   firstName  String
   lastName   String
   password   String
   userSkills UserSkill[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
 enum SkillLevel {
@@ -40,7 +40,6 @@ model Skill {
   id            String        @id @default(cuid())
   name          String
   description   String?
-  level         SkillLevel?
   category      SkillCategory @default(OTHER)
   parentSkillId String?
   isActive      Boolean       @default(true)
@@ -54,6 +53,7 @@ model Skill {
   deletedAt     DateTime?
 
   @@index([parentSkillId])
+  @@unique([parentSkillId, name])
 }
 
 model UserSkill {
@@ -62,7 +62,7 @@ model UserSkill {
   skillId      String
   currentLevel SkillLevel?
   targetLevel  SkillLevel?
-  notes        String?
+  notes        String?     @db.Text
 
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   skill        Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
