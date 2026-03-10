@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Prisma, SkillCategory, SkillLevel } from '@prisma/client';
+import { Prisma, SkillCategory } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SkillsService } from './skills.service';
 
@@ -20,7 +20,6 @@ describe('SkillsService', () => {
     id: 'skill-1',
     name: 'NestJS',
     description: 'Framework',
-    level: SkillLevel.INTERMEDIATE,
     category: SkillCategory.BACKEND,
     parentSkillId: null,
     isActive: true,
