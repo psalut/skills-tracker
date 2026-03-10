@@ -12,8 +12,7 @@ export class UserSkillsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserSkillDto: CreateUserSkillDto) {
-    const { userId, skillId, currentLevel, targetLevel, notes } =
-      createUserSkillDto;
+    const { userId, skillId, currentLevel, targetLevel, notes } = createUserSkillDto;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

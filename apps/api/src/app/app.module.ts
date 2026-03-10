@@ -17,7 +17,7 @@ import { UserSkillsModule } from '../user-skills/user-skills.module';
     UsersModule,
     AuthModule,
     SkillsModule,
-    UserSkillsModule,
+    UserSkillsModule
   ],
   controllers: [AppController],
   providers: [AppService],
