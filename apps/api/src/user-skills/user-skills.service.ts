@@ -60,7 +60,16 @@ export class UserSkillsService {
         notes,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        },
         skill: true,
       },
     });
@@ -69,7 +78,16 @@ export class UserSkillsService {
   async findAll() {
     return this.prisma.userSkill.findMany({
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        },
         skill: true,
       },
       orderBy: {
@@ -82,7 +100,16 @@ export class UserSkillsService {
     const userSkill = await this.prisma.userSkill.findUnique({
       where: { id },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        },
         skill: true,
       },
     });
@@ -127,7 +154,16 @@ export class UserSkillsService {
       where: { id },
       data: updateUserSkillDto,
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        },
         skill: true,
       },
     });
