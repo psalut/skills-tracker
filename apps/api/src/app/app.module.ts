@@ -6,6 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { SkillsModule } from '../skills/skills.module';
+import { UserSkillsModule } from '../user-skills/user-skills.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SkillsModule } from '../skills/skills.module';
     UsersModule,
     AuthModule,
     SkillsModule,
+    UserSkillsModule
   ],
   controllers: [AppController],
   providers: [AppService],
