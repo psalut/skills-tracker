@@ -12,7 +12,8 @@ export class UserSkillsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserSkillDto: CreateUserSkillDto) {
-    const { userId, skillId, currentLevel, targetLevel, notes } = createUserSkillDto;
+    const { userId, skillId, currentLevel, targetLevel, notes } =
+      createUserSkillDto;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -30,7 +31,9 @@ export class UserSkillsService {
     });
 
     if (!skill) {
-      throw new NotFoundException(`Active skill with id "${skillId}" not found`);
+      throw new NotFoundException(
+        `Active skill with id "${skillId}" not found`,
+      );
     }
 
     const existingUserSkill = await this.prisma.userSkill.findUnique({

@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { resetDatabase } from '../support/reset-database';
 import { createTestSkill } from '../support/factories/skill.factory';
-import { createTestUser, disconnectUserFactoryPrisma } from '../support/factories/user.factory';
+import {
+  createTestUser,
+  disconnectUserFactoryPrisma,
+} from '../support/factories/user.factory';
 
 describe('UserSkills API (e2e)', () => {
   beforeEach(async () => {
@@ -11,7 +14,6 @@ describe('UserSkills API (e2e)', () => {
   afterAll(async () => {
     await disconnectUserFactoryPrisma();
   });
-
 
   it('POST /user-skills should create a user-skill relation', async () => {
     const user = await createTestUser();

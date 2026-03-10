@@ -53,7 +53,8 @@ export class UserSkillsController {
   @Get('user-skills')
   @ApiOperation({
     summary: 'Get all user-skill relations',
-    description: 'Returns all user-skill relations with related user and skill data.',
+    description:
+      'Returns all user-skill relations with related user and skill data.',
   })
   @ApiOkResponse({
     description: 'User-skill relations retrieved successfully.',
