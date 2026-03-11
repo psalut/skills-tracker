@@ -11,9 +11,8 @@ import { UpdateUserSkillDto } from './dto/update-user-skill.dto';
 export class UserSkillsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserSkillDto: CreateUserSkillDto) {
-    const { userId, skillId, currentLevel, targetLevel, notes } =
-      createUserSkillDto;
+  async create(userId: string, createUserSkillDto: CreateUserSkillDto) {
+    const { skillId, currentLevel, targetLevel, notes } = createUserSkillDto;
 
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -75,8 +74,9 @@ export class UserSkillsService {
     });
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     return this.prisma.userSkill.findMany({
+      where: { userId },
       include: {
         user: {
           select: {
@@ -96,9 +96,12 @@ export class UserSkillsService {
     });
   }
 
-  async findOne(id: string) {
-    const userSkill = await this.prisma.userSkill.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const userSkill = await this.prisma.userSkill.findFirst({
+      where: {
+        id,
+        userId,
+      },
       include: {
         user: {
           select: {
@@ -141,14 +144,12 @@ export class UserSkillsService {
     });
   }
 
-  async update(id: string, updateUserSkillDto: UpdateUserSkillDto) {
-    const existingUserSkill = await this.prisma.userSkill.findUnique({
-      where: { id },
-    });
-
-    if (!existingUserSkill) {
-      throw new NotFoundException(`UserSkill with id "${id}" not found`);
-    }
+  async update(
+    id: string,
+    userId: string,
+    updateUserSkillDto: UpdateUserSkillDto,
+  ) {
+    await this.ensureOwnedUserSkillExists(id, userId);
 
     return this.prisma.userSkill.update({
       where: { id },
@@ -169,14 +170,8 @@ export class UserSkillsService {
     });
   }
 
-  async remove(id: string) {
-    const existingUserSkill = await this.prisma.userSkill.findUnique({
-      where: { id },
-    });
-
-    if (!existingUserSkill) {
-      throw new NotFoundException(`UserSkill with id "${id}" not found`);
-    }
+  async remove(id: string, userId: string) {
+    await this.ensureOwnedUserSkillExists(id, userId);
 
     await this.prisma.userSkill.delete({
       where: { id },
@@ -185,5 +180,20 @@ export class UserSkillsService {
     return {
       message: `UserSkill with id "${id}" deleted successfully`,
     };
+  }
+
+  private async ensureOwnedUserSkillExists(id: string, userId: string) {
+    const userSkill = await this.prisma.userSkill.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!userSkill) {
+      throw new NotFoundException(`UserSkill with id "${id}" not found`);
+    }
+
+    return userSkill;
   }
 }

@@ -4,13 +4,6 @@ import { SkillLevel } from '@prisma/client';
 
 export class CreateUserSkillDto {
   @ApiProperty({
-    description: 'User ID',
-    example: 'cm8xv4r3b0001abc123def456',
-  })
-  @IsString()
-  userId!: string;
-
-  @ApiProperty({
     description: 'Skill ID',
     example: 'cm8xv52x90002abc123def789',
   })

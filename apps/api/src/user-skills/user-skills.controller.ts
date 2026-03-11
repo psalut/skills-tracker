@@ -2,12 +2,16 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBadRequestResponse,
   ApiBody,
   ApiConflictResponse,
@@ -18,11 +22,21 @@ import {
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserSkillsService } from './user-skills.service';
 import { CreateUserSkillDto } from './dto/create-user-skill.dto';
 import { UpdateUserSkillDto } from './dto/update-user-skill.dto';
 
+type AuthenticatedRequest = Request & {
+  user: {
+    sub: string;
+    email: string;
+  };
+};
+
 @ApiTags('User Skills')
+@ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard)
 @Controller()
 export class UserSkillsController {
   constructor(private readonly userSkillsService: UserSkillsService) {}
@@ -46,8 +60,11 @@ export class UserSkillsController {
   @ApiConflictResponse({
     description: 'The user already has this skill assigned.',
   })
-  create(@Body() createUserSkillDto: CreateUserSkillDto) {
-    return this.userSkillsService.create(createUserSkillDto);
+  create(
+    @Req() req: AuthenticatedRequest,
+    @Body() createUserSkillDto: CreateUserSkillDto,
+  ) {
+    return this.userSkillsService.create(req.user.sub, createUserSkillDto);
   }
 
   @Get('user-skills')
@@ -59,8 +76,8 @@ export class UserSkillsController {
   @ApiOkResponse({
     description: 'User-skill relations retrieved successfully.',
   })
-  findAll() {
-    return this.userSkillsService.findAll();
+  findAll(@Req() req: AuthenticatedRequest) {
+    return this.userSkillsService.findAll(req.user.sub);
   }
 
   @Get('user-skills/:id')
@@ -78,8 +95,8 @@ export class UserSkillsController {
   @ApiNotFoundResponse({
     description: 'User-skill relation not found.',
   })
-  findOne(@Param('id') id: string) {
-    return this.userSkillsService.findOne(id);
+  findOne(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+    return this.userSkillsService.findOne(id, req.user.sub);
   }
 
   @Get('users/:userId/skills')
@@ -98,7 +115,14 @@ export class UserSkillsController {
   @ApiNotFoundResponse({
     description: 'User not found.',
   })
-  findByUser(@Param('userId') userId: string) {
+  findByUser(
+    @Req() req: AuthenticatedRequest,
+    @Param('userId') userId: string,
+  ) {
+    if (userId !== req.user.sub) {
+      throw new ForbiddenException('You can only access your own skills');
+    }
+
     return this.userSkillsService.findByUser(userId);
   }
 
@@ -124,10 +148,11 @@ export class UserSkillsController {
     description: 'User-skill relation not found.',
   })
   update(
+    @Req() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() updateUserSkillDto: UpdateUserSkillDto,
   ) {
-    return this.userSkillsService.update(id, updateUserSkillDto);
+    return this.userSkillsService.update(id, req.user.sub, updateUserSkillDto);
   }
 
   @Delete('user-skills/:id')
@@ -145,7 +170,7 @@ export class UserSkillsController {
   @ApiNotFoundResponse({
     description: 'User-skill relation not found.',
   })
-  remove(@Param('id') id: string) {
-    return this.userSkillsService.remove(id);
+  remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+    return this.userSkillsService.remove(id, req.user.sub);
   }
 }
