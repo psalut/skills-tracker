@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { AuthState, AuthUser } from '../models/auth.model';
+import { AuthState, AuthUser } from './auth.model';
 
 const ACCESS_TOKEN_KEY = 'access_token';
 

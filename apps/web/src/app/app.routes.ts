@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
-import { publicGuard } from './core/guards/public.guard';
+import { authGuard } from './core/auth/auth.guard';
+import { publicGuard } from './core/auth/public.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -40,7 +40,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login').then((m) => m.Login),
+    loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
     canActivate: [publicGuard],
   },
   {

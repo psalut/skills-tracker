@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthUser, LoginRequest } from '../models/auth.model';
+import { AuthUser, LoginRequest } from './auth.model';
 import { AuthStore } from './auth.store';
 
 @Injectable({
