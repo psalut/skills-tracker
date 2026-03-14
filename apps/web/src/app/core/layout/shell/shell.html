@@ -2,12 +2,25 @@
   <header class="shell__header">
     <div class="shell__brand">Skills Tracker</div>
 
-    <nav class="shell__nav">
-      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-      <a routerLink="/skills" routerLinkActive="active">Skills</a>
-      <a routerLink="/my-skills" routerLinkActive="active">My Skills</a>
-      <a routerLink="/profile" routerLinkActive="active">Profile</a>
-    </nav>
+    <div class="shell__actions">
+      <nav class="shell__nav">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/skills" routerLinkActive="active">Skills</a>
+        <a routerLink="/my-skills" routerLinkActive="active">My Skills</a>
+        <a routerLink="/profile" routerLinkActive="active">Profile</a>
+      </nav>
+
+      @if (user(); as currentUser) {
+        <div class="shell__session">
+          <span class="shell__user">
+            {{ currentUser.firstName || currentUser.email }}
+          </span>
+          <button type="button" class="shell__logout" (click)="logout()">
+            Logout
+          </button>
+        </div>
+      }
+    </div>
   </header>
 
   <main class="shell__content">

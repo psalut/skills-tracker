@@ -30,6 +30,16 @@ export class AuthStore {
     this.patchState({ status: 'loading' });
   }
 
+  setAccessToken(accessToken: string): void {
+    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+
+    this.patchState({
+      accessToken,
+      status: 'loading',
+      initialized: false,
+    });
+  }
+
   setSession(user: AuthUser, accessToken: string | null): void {
     if (accessToken) {
       localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);

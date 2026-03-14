@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthUser, LoginRequest, LoginResponse } from '../models/auth.model';
+import { AuthUser, LoginRequest } from '../models/auth.model';
 import { AuthStore } from './auth.store';
 
 @Injectable({
@@ -12,17 +12,32 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly authStore = inject(AuthStore);
   private readonly baseUrl = environment.apiBaseUrl;
-  private readonly tokenStorageKey = 'access_token';
+
+  readonly user = this.authStore.user;
+  readonly accessToken = this.authStore.accessToken;
+  readonly status = this.authStore.status;
+  readonly initialized = this.authStore.initialized;
+  readonly isAuthenticated = this.authStore.isAuthenticated;
+  readonly isLoading = computed(
+    () => this.authStore.isLoading() || !this.authStore.initialized(),
+  );
 
   async login(payload: LoginRequest): Promise<void> {
     this.authStore.setLoading();
 
     try {
       const response = await firstValueFrom(
-        this.http.post<LoginResponse>('/api/auth/login', payload),
+        this.http.post<{ accessToken: string }>(
+          `${this.baseUrl}/auth/login`,
+          payload,
+        ),
       );
 
-      this.authStore.setSession(response.user, response.accessToken);
+      this.authStore.setAccessToken(response.accessToken);
+
+      const user = await this.fetchCurrentUser();
+
+      this.authStore.setSession(user, response.accessToken);
     } catch (error) {
       this.authStore.clearSession();
       throw error;
@@ -30,7 +45,7 @@ export class AuthService {
   }
 
   async rehydrateSession(): Promise<void> {
-    const token = this.authStore.accessToken();
+    const token = this.accessToken();
 
     if (!token) {
       this.authStore.markInitializedAnonymous();
@@ -38,9 +53,7 @@ export class AuthService {
     }
 
     try {
-      const user = await firstValueFrom(
-        this.http.get<AuthUser>('/api/auth/me'),
-      );
+      const user = await this.fetchCurrentUser();
 
       this.authStore.setSession(user, token);
     } catch {
@@ -49,10 +62,17 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
-    try {
-      await firstValueFrom(this.http.post('/api/auth/logout', {}));
-    } finally {
-      this.authStore.clearSession();
-    }
+    this.authStore.clearSession();
+  }
+
+  async refreshCurrentUser(): Promise<AuthUser> {
+    const user = await this.fetchCurrentUser();
+    this.authStore.setSession(user, this.accessToken());
+
+    return user;
+  }
+
+  private fetchCurrentUser(): Promise<AuthUser> {
+    return firstValueFrom(this.http.get<AuthUser>(`${this.baseUrl}/auth/me`));
   }
 }

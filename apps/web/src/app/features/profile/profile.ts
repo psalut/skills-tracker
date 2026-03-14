@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -6,4 +7,9 @@ import { Component } from '@angular/core';
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })
-export class Profile {}
+export class Profile {
+  private readonly authService = inject(AuthService);
+
+  readonly user = this.authService.user;
+  readonly status = this.authService.status;
+}
