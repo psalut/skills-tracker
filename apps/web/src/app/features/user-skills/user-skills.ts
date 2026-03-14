@@ -21,7 +21,8 @@ export class UserSkills implements OnInit {
 
   readonly skills = signal<UserSkill[]>([]);
   readonly isLoading = signal(true);
-  readonly errorMessage = signal<string | null>(null);
+  readonly loadErrorMessage = signal<string | null>(null);
+  readonly updateErrorMessage = signal<string | null>(null);
   readonly updatingSkillIds = signal<string[]>([]);
 
   readonly stats = computed(() => {
@@ -91,13 +92,13 @@ export class UserSkills implements OnInit {
 
   private async loadUserSkills(): Promise<void> {
     this.isLoading.set(true);
-    this.errorMessage.set(null);
+    this.loadErrorMessage.set(null);
 
     try {
       const skills = await this.userSkillsService.getUserSkills();
       this.skills.set(skills);
     } catch {
-      this.errorMessage.set('Could not load your skills right now.');
+      this.loadErrorMessage.set('Could not load your skills right now.');
     } finally {
       this.isLoading.set(false);
     }
@@ -115,7 +116,7 @@ export class UserSkills implements OnInit {
     const previousLevel = skill.currentLevel;
 
     this.markSkillUpdating(skill.id, true);
-    this.errorMessage.set(null);
+    this.updateErrorMessage.set(null);
     this.patchSkill(skill.id, { currentLevel: nextLevel });
 
     try {
@@ -128,7 +129,9 @@ export class UserSkills implements OnInit {
       this.replaceSkill(updatedSkill);
     } catch {
       this.patchSkill(skill.id, { currentLevel: previousLevel });
-      this.errorMessage.set(`Could not update ${skill.skill.name} right now.`);
+      this.loadErrorMessage.set(
+        `Could not update ${skill.skill.name} right now.`,
+      );
     } finally {
       this.markSkillUpdating(skill.id, false);
     }

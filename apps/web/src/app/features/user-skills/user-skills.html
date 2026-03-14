@@ -14,11 +14,16 @@
   <section class="surface section">
     <p>Loading your skills...</p>
   </section>
-  } @else if (errorMessage()) {
+  } @else if (loadErrorMessage()) {
   <section class="surface section">
-    <p class="form-error">{{ errorMessage() }}</p>
+    <p class="form-error">{{ loadErrorMessage() }}</p>
   </section>
-  } @else {
+  } @else { @if (updateErrorMessage()) {
+  <section class="surface section">
+    <p class="form-error">{{ updateErrorMessage() }}</p>
+  </section>
+  }
+
   <section class="user-skills__stats">
     <article class="user-skills__stat surface section">
       <span class="user-skills__stat-label">Tracked skills</span>
