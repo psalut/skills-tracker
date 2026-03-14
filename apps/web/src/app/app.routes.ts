@@ -17,9 +17,7 @@ export const appRoutes: Route[] = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/dashboard/dashboard').then(
-            (m) => m.Dashboard
-          ),
+          import('./features/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
         path: 'skills',
@@ -30,7 +28,7 @@ export const appRoutes: Route[] = [
         path: 'my-skills',
         loadComponent: () =>
           import('./features/user-skills/user-skills').then(
-            (m) => m.UserSkills
+            (m) => m.UserSkills,
           ),
       },
       {
@@ -42,8 +40,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login').then((m) => m.Login),
+    loadComponent: () => import('./features/auth/login').then((m) => m.Login),
     canActivate: [publicGuard],
   },
   {

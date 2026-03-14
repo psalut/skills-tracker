@@ -39,7 +39,7 @@
               placeholder="you@example.com"
             />
             @if (isFieldInvalid('email')) {
-              <p class="form-error">Enter a valid email address.</p>
+            <p class="form-error">Enter a valid email address.</p>
             }
           </div>
 
@@ -53,12 +53,12 @@
               placeholder="••••••••"
             />
             @if (isFieldInvalid('password')) {
-              <p class="form-error">Password must have at least 6 characters.</p>
+            <p class="form-error">Password must have at least 6 characters.</p>
             }
           </div>
 
           @if (errorMessage()) {
-            <p class="form-error">{{ errorMessage() }}</p>
+          <p class="form-error">{{ errorMessage() }}</p>
           }
 
           <button
@@ -66,11 +66,7 @@
             type="submit"
             [disabled]="isSubmitting()"
           >
-            @if (isSubmitting()) {
-              Signing in...
-            } @else {
-              Sign in
-            }
+            @if (isSubmitting()) { Signing in... } @else { Sign in }
           </button>
         </form>
       </div>

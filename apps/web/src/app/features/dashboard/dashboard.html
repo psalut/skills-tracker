@@ -12,16 +12,18 @@
     <div class="dashboard__hero-card surface">
       <p class="dashboard__hero-card-label">Current streak</p>
       <strong class="dashboard__hero-card-value">14 days</strong>
-      <span class="dashboard__hero-card-caption">Great consistency this month</span>
+      <span class="dashboard__hero-card-caption"
+        >Great consistency this month</span
+      >
     </div>
   </header>
 
   <section class="dashboard__stats">
     @for (stat of stats; track stat.label) {
-      <article class="dashboard__stat surface section">
-        <span class="dashboard__stat-label">{{ stat.label }}</span>
-        <strong class="dashboard__stat-value">{{ stat.value }}</strong>
-      </article>
+    <article class="dashboard__stat surface section">
+      <span class="dashboard__stat-label">{{ stat.label }}</span>
+      <strong class="dashboard__stat-value">{{ stat.value }}</strong>
+    </article>
     }
   </section>
 
@@ -36,31 +38,31 @@
 
       <div class="dashboard__skill-list">
         @for (skill of focusSkills; track skill.name) {
-          <div class="dashboard__skill-item">
-            <div class="dashboard__skill-top">
-              <div>
-                <h3>{{ skill.name }}</h3>
-                <p>Current {{ skill.current }} · Target {{ skill.target }}</p>
-              </div>
-              <span class="dashboard__skill-percent">
-                {{ getProgress(skill.current, skill.target) }}%
-              </span>
+        <div class="dashboard__skill-item">
+          <div class="dashboard__skill-top">
+            <div>
+              <h3>{{ skill.name }}</h3>
+              <p>Current {{ skill.current }} · Target {{ skill.target }}</p>
             </div>
-
-            <div
-              class="dashboard__progress"
-              role="progressbar"
-              [attr.aria-valuenow]="getProgress(skill.current, skill.target)"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              [attr.aria-label]="skill.name + ' progress'"
-            >
-              <span
-                class="dashboard__progress-bar"
-                [style.width.%]="getProgress(skill.current, skill.target)"
-              ></span>
-            </div>
+            <span class="dashboard__skill-percent">
+              {{ getProgress(skill.current, skill.target) }}%
+            </span>
           </div>
+
+          <div
+            class="dashboard__progress"
+            role="progressbar"
+            [attr.aria-valuenow]="getProgress(skill.current, skill.target)"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="skill.name + ' progress'"
+          >
+            <span
+              class="dashboard__progress-bar"
+              [style.width.%]="getProgress(skill.current, skill.target)"
+            ></span>
+          </div>
+        </div>
         }
       </div>
     </article>
