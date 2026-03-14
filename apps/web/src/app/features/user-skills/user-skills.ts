@@ -29,10 +29,14 @@ export class UserSkills implements OnInit {
 
     return {
       total: skills.length,
-      inProgress: skills.filter((skill) => skill.currentLevel !== skill.targetLevel)
-        .length,
+      inProgress: skills.filter(
+        (skill) => skill.currentLevel !== skill.targetLevel,
+      ).length,
       completed: skills.filter(
-        (skill) => skill.currentLevel && skill.targetLevel && skill.currentLevel === skill.targetLevel,
+        (skill) =>
+          skill.currentLevel &&
+          skill.targetLevel &&
+          skill.currentLevel === skill.targetLevel,
       ).length,
     };
   });
@@ -50,7 +54,9 @@ export class UserSkills implements OnInit {
   }
 
   canDecrease(skill: UserSkill): boolean {
-    return SKILL_LEVELS.indexOf(skill.currentLevel) > 0 && !this.isUpdating(skill.id);
+    return (
+      SKILL_LEVELS.indexOf(skill.currentLevel) > 0 && !this.isUpdating(skill.id)
+    );
   }
 
   canIncrease(skill: UserSkill): boolean {
@@ -113,9 +119,12 @@ export class UserSkills implements OnInit {
     this.patchSkill(skill.id, { currentLevel: nextLevel });
 
     try {
-      const updatedSkill = await this.userSkillsService.updateUserSkill(skill.id, {
-        currentLevel: nextLevel,
-      });
+      const updatedSkill = await this.userSkillsService.updateUserSkill(
+        skill.id,
+        {
+          currentLevel: nextLevel,
+        },
+      );
       this.replaceSkill(updatedSkill);
     } catch {
       this.patchSkill(skill.id, { currentLevel: previousLevel });
@@ -127,7 +136,9 @@ export class UserSkills implements OnInit {
 
   private replaceSkill(updatedSkill: UserSkill): void {
     this.skills.update((skills) =>
-      skills.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill)),
+      skills.map((skill) =>
+        skill.id === updatedSkill.id ? updatedSkill : skill,
+      ),
     );
   }
 

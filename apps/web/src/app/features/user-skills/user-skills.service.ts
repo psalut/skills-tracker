@@ -2,10 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {
-  UpdateUserSkillRequest,
-  UserSkill,
-} from '../skills/skill.model';
+import { UpdateUserSkillRequest, UserSkill } from '../skills/skill.model';
 
 @Injectable({
   providedIn: 'root',

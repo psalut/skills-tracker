@@ -11,122 +11,119 @@
   </header>
 
   @if (isLoading()) {
-    <section class="surface section">
-      <p>Loading your skills...</p>
-    </section>
+  <section class="surface section">
+    <p>Loading your skills...</p>
+  </section>
   } @else if (errorMessage()) {
-    <section class="surface section">
-      <p class="form-error">{{ errorMessage() }}</p>
-    </section>
+  <section class="surface section">
+    <p class="form-error">{{ errorMessage() }}</p>
+  </section>
   } @else {
-    <section class="user-skills__stats">
-      <article class="user-skills__stat surface section">
-        <span class="user-skills__stat-label">Tracked skills</span>
-        <strong class="user-skills__stat-value">{{ stats().total }}</strong>
-      </article>
+  <section class="user-skills__stats">
+    <article class="user-skills__stat surface section">
+      <span class="user-skills__stat-label">Tracked skills</span>
+      <strong class="user-skills__stat-value">{{ stats().total }}</strong>
+    </article>
 
-      <article class="user-skills__stat surface section">
-        <span class="user-skills__stat-label">In progress</span>
-        <strong class="user-skills__stat-value">{{ stats().inProgress }}</strong>
-      </article>
+    <article class="user-skills__stat surface section">
+      <span class="user-skills__stat-label">In progress</span>
+      <strong class="user-skills__stat-value">{{ stats().inProgress }}</strong>
+    </article>
 
-      <article class="user-skills__stat surface section">
-        <span class="user-skills__stat-label">Reached target</span>
-        <strong class="user-skills__stat-value">{{ stats().completed }}</strong>
-      </article>
-    </section>
+    <article class="user-skills__stat surface section">
+      <span class="user-skills__stat-label">Reached target</span>
+      <strong class="user-skills__stat-value">{{ stats().completed }}</strong>
+    </article>
+  </section>
 
-    @if (skills().length) {
-      <section class="user-skills__grid">
-        @for (userSkill of skills(); track userSkill.id) {
-          <article class="user-skills__card surface section">
-            <div class="user-skills__card-top">
-              <div>
-                <div class="user-skills__tags">
-                  <span class="user-skills__tag">
-                    {{ userSkill.skill.category.replace('_', ' ') }}
-                  </span>
-                  @if (userSkill.skill.isActive) {
-                    <span class="user-skills__tag user-skills__tag--success">
-                      Active
-                    </span>
-                  }
-                </div>
-                <h2>{{ userSkill.skill.name }}</h2>
-                <p>
-                  {{
-                    userSkill.skill.description ||
-                      'No description provided for this skill yet.'
-                  }}
-                </p>
-              </div>
-
-              <strong class="user-skills__percent">
-                {{ getProgress(userSkill) }}%
-              </strong>
-            </div>
-
-            <div
-              class="user-skills__progress"
-              role="progressbar"
-              [attr.aria-valuenow]="getProgress(userSkill)"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              [attr.aria-label]="userSkill.skill.name + ' progress'"
-            >
-              <span
-                class="user-skills__progress-bar"
-                [style.width.%]="getProgress(userSkill)"
-              ></span>
-            </div>
-
-            <dl class="user-skills__meta">
-              <div>
-                <dt>Current</dt>
-                <dd>{{ getLevelLabel(userSkill.currentLevel) }}</dd>
-              </div>
-              <div>
-                <dt>Target</dt>
-                <dd>{{ getLevelLabel(userSkill.targetLevel) }}</dd>
-              </div>
-            </dl>
-
-            <div class="user-skills__controls">
-              <button
-                type="button"
-                class="button user-skills__control"
-                [disabled]="!canDecrease(userSkill)"
-                (click)="decreaseProgress(userSkill)"
-              >
-                Decrease
-              </button>
-              <button
-                type="button"
-                class="button button--primary user-skills__control"
-                [disabled]="!canIncrease(userSkill)"
-                (click)="increaseProgress(userSkill)"
-              >
-                Increase
-              </button>
-            </div>
-
-            @if (userSkill.notes) {
-              <div class="user-skills__notes">
-                <h3>Notes</h3>
-                <p>{{ userSkill.notes }}</p>
-              </div>
+  @if (skills().length) {
+  <section class="user-skills__grid">
+    @for (userSkill of skills(); track userSkill.id) {
+    <article class="user-skills__card surface section">
+      <div class="user-skills__card-top">
+        <div>
+          <div class="user-skills__tags">
+            <span class="user-skills__tag">
+              {{ userSkill.skill.category.replace('_', ' ') }}
+            </span>
+            @if (userSkill.skill.isActive) {
+            <span class="user-skills__tag user-skills__tag--success">
+              Active
+            </span>
             }
-          </article>
-        }
-      </section>
-    } @else {
-      <section class="surface section user-skills__empty">
-        <h2>No skills yet</h2>
-        <p>
-          You do not have any tracked skills yet. When user-skill relations are
-          created in the backend, they will appear here.
-        </p>
-      </section>
+          </div>
+          <h2>{{ userSkill.skill.name }}</h2>
+          <p>
+            {{ userSkill.skill.description || 'No description provided for this
+            skill yet.' }}
+          </p>
+        </div>
+
+        <strong class="user-skills__percent">
+          {{ getProgress(userSkill) }}%
+        </strong>
+      </div>
+
+      <div
+        class="user-skills__progress"
+        role="progressbar"
+        [attr.aria-valuenow]="getProgress(userSkill)"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="userSkill.skill.name + ' progress'"
+      >
+        <span
+          class="user-skills__progress-bar"
+          [style.width.%]="getProgress(userSkill)"
+        ></span>
+      </div>
+
+      <dl class="user-skills__meta">
+        <div>
+          <dt>Current</dt>
+          <dd>{{ getLevelLabel(userSkill.currentLevel) }}</dd>
+        </div>
+        <div>
+          <dt>Target</dt>
+          <dd>{{ getLevelLabel(userSkill.targetLevel) }}</dd>
+        </div>
+      </dl>
+
+      <div class="user-skills__controls">
+        <button
+          type="button"
+          class="button user-skills__control"
+          [disabled]="!canDecrease(userSkill)"
+          (click)="decreaseProgress(userSkill)"
+        >
+          Decrease
+        </button>
+        <button
+          type="button"
+          class="button button--primary user-skills__control"
+          [disabled]="!canIncrease(userSkill)"
+          (click)="increaseProgress(userSkill)"
+        >
+          Increase
+        </button>
+      </div>
+
+      @if (userSkill.notes) {
+      <div class="user-skills__notes">
+        <h3>Notes</h3>
+        <p>{{ userSkill.notes }}</p>
+      </div>
+      }
+    </article>
     }
-  }
+  </section>
+  } @else {
+  <section class="surface section user-skills__empty">
+    <h2>No skills yet</h2>
+    <p>
+      You do not have any tracked skills yet. When user-skill relations are
+      created in the backend, they will appear here.
+    </p>
+  </section>
+  } }
 </section>

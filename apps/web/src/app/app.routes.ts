@@ -40,7 +40,8 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
+    loadComponent: () =>
+      import('./features/auth/login/login').then((m) => m.Login),
     canActivate: [publicGuard],
   },
   {

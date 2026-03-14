@@ -1,9 +1,5 @@
-import { AuthUser } from "../../core/auth/auth.model";
-export type SkillLevel =
-  | 'BEGINNER'
-  | 'INTERMEDIATE'
-  | 'ADVANCED'
-  | 'EXPERT';
+import { AuthUser } from '../../core/auth/auth.model';
+export type SkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
 
 export type SkillCategory =
   | 'FRONTEND'
