@@ -1,1 +1,30 @@
-<p>profile works!</p>
+@if (user(); as currentUser) {
+<section class="profile">
+  <header class="profile__header">
+    <p class="profile__eyebrow">Session</p>
+    <h1>{{ currentUser.firstName || 'User profile' }}</h1>
+    <p class="profile__status">Status: {{ status() }}</p>
+  </header>
+
+  <dl class="profile__details">
+    <div>
+      <dt>ID</dt>
+      <dd>{{ currentUser.id }}</dd>
+    </div>
+    <div>
+      <dt>Email</dt>
+      <dd>{{ currentUser.email }}</dd>
+    </div>
+    <div>
+      <dt>First name</dt>
+      <dd>{{ currentUser.firstName || 'Not set' }}</dd>
+    </div>
+    <div>
+      <dt>Last name</dt>
+      <dd>{{ currentUser.lastName || 'Not set' }}</dd>
+    </div>
+  </dl>
+</section>
+} @else {
+<p>There is no active session.</p>
+}

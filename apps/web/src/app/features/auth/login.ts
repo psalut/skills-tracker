@@ -22,7 +22,7 @@ export class Login {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -31,16 +31,14 @@ export class Login {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
 
-    this.authService.login(this.form.getRawValue()).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        void this.router.navigate(['/dashboard']);
-      },
-      error: () => {
-        this.isSubmitting.set(false);
-        this.errorMessage.set('Invalid email or password.');
-      },
-    });
+    try {
+      await this.authService.login(this.form.getRawValue());
+      await this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+    } catch {
+      this.errorMessage.set('Invalid email or password.');
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 
   isFieldInvalid(fieldName: 'email' | 'password'): boolean {
