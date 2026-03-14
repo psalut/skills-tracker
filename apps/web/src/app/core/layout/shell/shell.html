@@ -11,14 +11,14 @@
       </nav>
 
       @if (user(); as currentUser) {
-        <div class="shell__session">
-          <span class="shell__user">
-            {{ currentUser.firstName || currentUser.email }}
-          </span>
-          <button type="button" class="shell__logout" (click)="logout()">
-            Logout
-          </button>
-        </div>
+      <div class="shell__session">
+        <span class="shell__user">
+          {{ currentUser.firstName || currentUser.email }}
+        </span>
+        <button type="button" class="shell__logout" (click)="logout()">
+          Logout
+        </button>
+      </div>
       }
     </div>
   </header>
