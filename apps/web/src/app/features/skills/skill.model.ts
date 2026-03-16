@@ -24,6 +24,22 @@ export interface Skill {
   deletedAt: string | null;
 }
 
+export interface CreateSkillRequest {
+  name: string;
+  description?: string;
+  category?: SkillCategory;
+  isActive?: boolean;
+  parentSkillId?: string;
+}
+
+export interface UpdateSkillRequest {
+  name?: string;
+  description?: string;
+  category?: SkillCategory;
+  isActive?: boolean;
+  parentSkillId?: string | null;
+}
+
 export interface UserSkill {
   id: string;
   userId: string;
@@ -35,6 +51,13 @@ export interface UserSkill {
   updatedAt: string;
   user?: AuthUser;
   skill: Skill;
+}
+
+export interface CreateUserSkillRequest {
+  skillId: string;
+  currentLevel?: SkillLevel | null;
+  targetLevel?: SkillLevel | null;
+  notes?: string | null;
 }
 
 export interface UpdateUserSkillRequest {
