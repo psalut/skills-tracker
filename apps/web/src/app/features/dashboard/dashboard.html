@@ -1,25 +1,41 @@
 <section class="dashboard page container">
   <header class="page__header dashboard__hero surface section">
     <div class="dashboard__hero-content">
-      <p class="dashboard__eyebrow">Skills tracker</p>
-      <h1 class="page__title">Keep improving, one skill at a time.</h1>
+      <p class="dashboard__eyebrow">My skills overview</p>
+      <h1 class="page__title">Your current learning status</h1>
       <p class="page__description">
-        Track your current level, define learning goals, and build consistency
-        across your frontend and backend skills.
+        Review what is moving, what is blocked, and what is closest to target
+        based on your tracked skills.
       </p>
-    </div>
-
-    <div class="dashboard__hero-card surface">
-      <p class="dashboard__hero-card-label">Current streak</p>
-      <strong class="dashboard__hero-card-value">14 days</strong>
-      <span class="dashboard__hero-card-caption"
-        >Great consistency this month</span
-      >
     </div>
   </header>
 
+  @if (isLoading()) {
+  <section class="surface section dashboard__feedback">
+    <p>Loading your dashboard...</p>
+  </section>
+  } @else if (loadErrorMessage(); as errorMessage) {
+  <section class="surface section dashboard__feedback">
+    <p>{{ errorMessage }}</p>
+    <button type="button" class="dashboard__retry" (click)="retry()">
+      Retry
+    </button>
+  </section>
+  } @else if (!hasSkills()) {
+  <section class="surface section dashboard__empty">
+    <h2>No tracked skills yet</h2>
+    <p>
+      Add skills to your profile to start seeing progress, priorities, and
+      completion status here.
+    </p>
+    <div class="dashboard__empty-actions">
+      <a routerLink="/skills">Browse skills</a>
+      <a routerLink="/my-skills">Go to My Skills</a>
+    </div>
+  </section>
+  } @else {
   <section class="dashboard__stats">
-    @for (stat of stats; track stat.label) {
+    @for (stat of stats(); track stat.label) {
     <article class="dashboard__stat surface section">
       <span class="dashboard__stat-label">{{ stat.label }}</span>
       <strong class="dashboard__stat-value">{{ stat.value }}</strong>
@@ -31,58 +47,89 @@
     <article class="surface section">
       <div class="dashboard__section-header">
         <div>
-          <h2>Current focus</h2>
-          <p>Skills you are actively improving right now.</p>
+          <h2>Needs attention</h2>
+          <p>Skills with the biggest gap to their target level.</p>
         </div>
       </div>
 
+      @if (needsAttention().length === 0) {
+      <p class="dashboard__empty-copy">
+        Nothing needs attention right now. Either your skills are completed or
+        they do not have a target level yet.
+      </p>
+      } @else {
       <div class="dashboard__skill-list">
-        @for (skill of focusSkills; track skill.name) {
+        @for (skill of needsAttention(); track trackByItem($index, skill)) {
         <div class="dashboard__skill-item">
           <div class="dashboard__skill-top">
             <div>
               <h3>{{ skill.name }}</h3>
-              <p>Current {{ skill.current }} · Target {{ skill.target }}</p>
+              <p>{{ skill.currentLabel }} to {{ skill.targetLabel }}</p>
             </div>
-            <span class="dashboard__skill-percent">
-              {{ getProgress(skill.current, skill.target) }}%
-            </span>
+            <span class="dashboard__skill-percent">{{ skill.progress }}%</span>
           </div>
 
           <div
             class="dashboard__progress"
             role="progressbar"
-            [attr.aria-valuenow]="getProgress(skill.current, skill.target)"
+            [attr.aria-valuenow]="skill.progress"
             aria-valuemin="0"
             aria-valuemax="100"
             [attr.aria-label]="skill.name + ' progress'"
           >
             <span
               class="dashboard__progress-bar"
-              [style.width.%]="getProgress(skill.current, skill.target)"
+              [style.width.%]="skill.progress"
             ></span>
           </div>
         </div>
         }
       </div>
+      }
     </article>
 
     <article class="surface section">
       <div class="dashboard__section-header">
         <div>
-          <h2>Next milestone</h2>
-          <p>Your nearest learning objective.</p>
+          <h2>Closest to target</h2>
+          <p>Skills that are nearest to completion.</p>
         </div>
       </div>
 
-      <div class="dashboard__milestone">
-        <span class="dashboard__milestone-badge">Top priority</span>
-        <h3>Reach Angular level 8</h3>
-        <p>
-          Focus on standalone architecture, signals, route-level patterns, and
-          reusable UI composition.
-        </p>
+      @if (closestToTarget().length === 0) {
+      <p class="dashboard__empty-copy">
+        There are no in-progress skills with a target level yet.
+      </p>
+      } @else {
+      <div class="dashboard__skill-list">
+        @for (skill of closestToTarget(); track trackByItem($index, skill)) {
+        <div class="dashboard__skill-item">
+          <div class="dashboard__skill-top">
+            <div>
+              <h3>{{ skill.name }}</h3>
+              <p>{{ skill.currentLabel }} to {{ skill.targetLabel }}</p>
+            </div>
+            <span class="dashboard__skill-percent">{{ skill.progress }}%</span>
+          </div>
+
+          <div
+            class="dashboard__progress"
+            role="progressbar"
+            [attr.aria-valuenow]="skill.progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="skill.name + ' progress'"
+          >
+            <span
+              class="dashboard__progress-bar"
+              [style.width.%]="skill.progress"
+            ></span>
+          </div>
+        </div>
+        }
       </div>
+      }
     </article>
   </section>
+  }
 </section>
