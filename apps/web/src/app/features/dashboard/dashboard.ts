@@ -46,7 +46,9 @@ export class Dashboard implements OnInit {
       },
       {
         label: 'Completed',
-        value: skills.filter((skill) => this.isCompleted(skill)).length.toString(),
+        value: skills
+          .filter((skill) => this.isCompleted(skill))
+          .length.toString(),
       },
       {
         label: 'Not started',
@@ -63,7 +65,9 @@ export class Dashboard implements OnInit {
       .map((skill) => this.toListItem(skill))
       .sort(
         (left, right) =>
-          right.gap - left.gap || left.progress - right.progress || left.name.localeCompare(right.name),
+          right.gap - left.gap ||
+          left.progress - right.progress ||
+          left.name.localeCompare(right.name),
       )
       .slice(0, 4),
   );
@@ -74,7 +78,9 @@ export class Dashboard implements OnInit {
       .map((skill) => this.toListItem(skill))
       .sort(
         (left, right) =>
-          left.gap - right.gap || right.progress - left.progress || left.name.localeCompare(right.name),
+          left.gap - right.gap ||
+          right.progress - left.progress ||
+          left.name.localeCompare(right.name),
       )
       .slice(0, 4),
   );
@@ -131,7 +137,9 @@ export class Dashboard implements OnInit {
   }
 
   private isInProgress(skill: UserSkill): boolean {
-    return skill.targetLevel !== null && skill.currentLevel !== skill.targetLevel;
+    return (
+      skill.targetLevel !== null && skill.currentLevel !== skill.targetLevel
+    );
   }
 
   private getProgress(skill: UserSkill): number {
