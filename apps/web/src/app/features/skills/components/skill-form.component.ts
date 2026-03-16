@@ -8,11 +8,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Skill, SkillCategory } from '../skill.model';
 
 type SkillFormValue = {
@@ -36,9 +32,13 @@ type SkillFormValue = {
         </div>
 
         @if (skill) {
-        <button type="button" class="button skill-form__ghost" (click)="cancel.emit()">
-          Cancel
-        </button>
+          <button
+            type="button"
+            class="button skill-form__ghost"
+            (click)="cancel.emit()"
+          >
+            Cancel
+          </button>
         }
       </div>
 
@@ -53,7 +53,7 @@ type SkillFormValue = {
             placeholder="Angular, NestJS, Docker..."
           />
           @if (isInvalid('name')) {
-          <p class="form-error">Name must have at least 2 characters.</p>
+            <p class="form-error">Name must have at least 2 characters.</p>
           }
         </div>
 
@@ -77,7 +77,9 @@ type SkillFormValue = {
               formControlName="category"
             >
               @for (category of categories; track category) {
-              <option [value]="category">{{ formatCategory(category) }}</option>
+                <option [value]="category">
+                  {{ formatCategory(category) }}
+                </option>
               }
             </select>
           </div>
@@ -91,7 +93,7 @@ type SkillFormValue = {
             >
               <option value="">No parent</option>
               @for (option of parentOptions; track option.id) {
-              <option [value]="option.id">{{ option.name }}</option>
+                <option [value]="option.id">{{ option.name }}</option>
               }
             </select>
           </div>
@@ -103,14 +105,18 @@ type SkillFormValue = {
         </label>
 
         @if (errorMessage) {
-        <p class="form-error">{{ errorMessage }}</p>
+          <p class="form-error">{{ errorMessage }}</p>
         }
 
         <div class="skill-form__actions">
           @if (skill) {
-          <button type="button" class="button skill-form__ghost" (click)="cancel.emit()">
-            Cancel
-          </button>
+            <button
+              type="button"
+              class="button skill-form__ghost"
+              (click)="cancel.emit()"
+            >
+              Cancel
+            </button>
           }
           <button
             type="submit"

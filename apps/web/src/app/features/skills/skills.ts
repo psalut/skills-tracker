@@ -89,8 +89,7 @@ export class Skills implements OnInit {
         query.length === 0 ||
         skill.name.toLowerCase().includes(query) ||
         (skill.description?.toLowerCase().includes(query) ?? false);
-      const matchesCategory =
-        category === 'ALL' || skill.category === category;
+      const matchesCategory = category === 'ALL' || skill.category === category;
       const matchesStatus =
         status === 'ALL' ||
         (status === 'ACTIVE' ? skill.isActive : !skill.isActive);
@@ -149,9 +148,7 @@ export class Skills implements OnInit {
     return this.addingSkillIds().includes(skillId);
   }
 
-  async saveSkill(
-    payload: SkillFormPayload,
-  ): Promise<void> {
+  async saveSkill(payload: SkillFormPayload): Promise<void> {
     this.isSaving.set(true);
     this.saveErrorMessage.set(null);
 
@@ -250,7 +247,9 @@ export class Skills implements OnInit {
   private async loadTrackedSkills(): Promise<void> {
     try {
       const userSkills = await this.userSkillsService.getUserSkills();
-      this.trackedSkillIds.set(userSkills.map((userSkill) => userSkill.skillId));
+      this.trackedSkillIds.set(
+        userSkills.map((userSkill) => userSkill.skillId),
+      );
     } catch {
       this.addErrorMessage.set('Could not load your tracked skills right now.');
     }
@@ -258,7 +257,9 @@ export class Skills implements OnInit {
 
   private replaceSkill(updatedSkill: Skill): void {
     this.skills.update((skills) =>
-      skills.map((skill) => (skill.id === updatedSkill.id ? updatedSkill : skill)),
+      skills.map((skill) =>
+        skill.id === updatedSkill.id ? updatedSkill : skill,
+      ),
     );
   }
 
@@ -280,7 +281,9 @@ export class Skills implements OnInit {
       description: payload.description,
       category: payload.category,
       isActive: payload.isActive,
-      ...(payload.parentSkillId ? { parentSkillId: payload.parentSkillId } : {}),
+      ...(payload.parentSkillId
+        ? { parentSkillId: payload.parentSkillId }
+        : {}),
     };
   }
 

@@ -16,7 +16,9 @@ export class SkillsService {
   }
 
   createSkill(payload: CreateSkillRequest): Promise<Skill> {
-    return firstValueFrom(this.http.post<Skill>(`${this.baseUrl}/skills`, payload));
+    return firstValueFrom(
+      this.http.post<Skill>(`${this.baseUrl}/skills`, payload),
+    );
   }
 
   updateSkill(id: string, payload: UpdateSkillRequest): Promise<Skill> {
