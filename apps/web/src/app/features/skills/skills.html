@@ -1,1 +1,197 @@
-<p>skills works!</p>
+<section class="skills page container">
+  <header class="page__header skills__hero surface section">
+    <div>
+      <p class="skills__eyebrow">Skills catalog</p>
+      <h1 class="page__title">Browse the skill map.</h1>
+      <p class="page__description">
+        Explore the available skills, search by keyword, and narrow the catalog
+        by category or status.
+      </p>
+    </div>
+
+    <section class="skills__stats" aria-label="Skills overview">
+      <article class="skills__stat">
+        <span class="skills__stat-label">Total skills</span>
+        <strong class="skills__stat-value">{{ stats().total }}</strong>
+      </article>
+      <article class="skills__stat">
+        <span class="skills__stat-label">Active</span>
+        <strong class="skills__stat-value">{{ stats().active }}</strong>
+      </article>
+      <article class="skills__stat">
+        <span class="skills__stat-label">Categories</span>
+        <strong class="skills__stat-value">{{ stats().categories }}</strong>
+      </article>
+    </section>
+  </header>
+
+  @if (isLoading()) {
+  <section class="surface section">
+    <p>Loading skills catalog...</p>
+  </section>
+  } @else if (loadErrorMessage()) {
+  <section class="surface section">
+    <p class="form-error">{{ loadErrorMessage() }}</p>
+  </section>
+  } @else {
+  <app-skill-form
+    [categories]="categories"
+    [parentOptions]="parentOptions()"
+    [skill]="editingSkill()"
+    [isSaving]="isSaving()"
+    [errorMessage]="saveErrorMessage()"
+    (save)="saveSkill($event)"
+    (cancel)="cancelEdit()"
+  />
+
+  @if (addErrorMessage()) {
+  <section class="surface section">
+    <p class="form-error">{{ addErrorMessage() }}</p>
+  </section>
+  }
+
+  <section class="skills__filters surface section">
+    <div class="form-field skills__filter-field skills__filter-field--search">
+      <label class="form-label" for="skills-search">Search</label>
+      <input
+        id="skills-search"
+        class="form-input"
+        type="search"
+        placeholder="Search by name or description"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+    </div>
+
+    <div class="form-field skills__filter-field">
+      <label class="form-label" for="skills-category">Category</label>
+      <select
+        id="skills-category"
+        class="form-input"
+        [ngModel]="selectedCategory()"
+        (ngModelChange)="selectedCategory.set($event)"
+      >
+        <option value="ALL">All categories</option>
+        @for (category of categories; track category) {
+        <option [value]="category">{{ formatCategory(category) }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-field skills__filter-field">
+      <label class="form-label" for="skills-status">Status</label>
+      <select
+        id="skills-status"
+        class="form-input"
+        [ngModel]="selectedStatus()"
+        (ngModelChange)="selectedStatus.set($event)"
+      >
+        <option value="ALL">All statuses</option>
+        <option value="ACTIVE">Active</option>
+        <option value="INACTIVE">Inactive</option>
+      </select>
+    </div>
+
+    <div class="skills__filter-actions">
+      <p class="skills__results-count">
+        {{ filteredSkills().length }} result{{
+          filteredSkills().length === 1 ? '' : 's'
+        }}
+      </p>
+      <button
+        type="button"
+        class="button"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Clear filters
+      </button>
+    </div>
+  </section>
+
+  @if (filteredSkills().length) {
+  <section class="skills__grid">
+    @for (skill of filteredSkills(); track trackSkill($index, skill)) {
+    <article class="skills__card surface section">
+      <div class="skills__card-top">
+        <div class="skills__tags">
+          <span class="skills__tag">{{ formatCategory(skill.category) }}</span>
+          <span
+            class="skills__tag"
+            [class.skills__tag--inactive]="!skill.isActive"
+          >
+            {{ skill.isActive ? 'Active' : 'Inactive' }}
+          </span>
+          @if (!skill.parentSkillId) {
+          <span class="skills__tag skills__tag--neutral">Root skill</span>
+          }
+        </div>
+
+        <h2>{{ skill.name }}</h2>
+        <p>
+          {{ skill.description || 'No description provided for this skill yet.' }}
+        </p>
+      </div>
+
+      <dl class="skills__meta">
+        <div>
+          <dt>Updated</dt>
+          <dd>{{ skill.updatedAt | date: 'mediumDate' }}</dd>
+        </div>
+        <div>
+          <dt>Hierarchy</dt>
+          <dd>{{ skill.parentSkillId ? 'Child skill' : 'Top-level skill' }}</dd>
+        </div>
+      </dl>
+
+      <div class="skills__actions">
+        <button
+          type="button"
+          class="button skills__action"
+          [class.skills__action--success]="isTracked(skill.id)"
+          [disabled]="isTracked(skill.id) || isAdding(skill.id)"
+          (click)="addToMySkills(skill)"
+        >
+          @if (isAdding(skill.id)) {
+          Adding...
+          } @else if (isTracked(skill.id)) {
+          Added to my skills
+          } @else {
+          Add to my skills
+          }
+        </button>
+        <button
+          type="button"
+          class="button skills__action skills__action--secondary"
+          (click)="startEdit(skill)"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          class="button"
+          [class.button--primary]="!skill.isActive"
+          [class.skills__action--danger]="skill.isActive"
+          [disabled]="isToggling(skill.id)"
+          (click)="toggleSkillStatus(skill)"
+        >
+          @if (isToggling(skill.id)) {
+          Saving...
+          } @else {
+          {{ skill.isActive ? 'Deactivate' : 'Activate' }}
+          }
+        </button>
+      </div>
+    </article>
+    }
+  </section>
+  } @else {
+  <section class="surface section skills__empty">
+    <h2>No matching skills</h2>
+    <p>
+      No skills match the current search and filters. Adjust the criteria to
+      see more results.
+    </p>
+  </section>
+  } }
+</section>
