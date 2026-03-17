@@ -1,181 +1,239 @@
-# 🚀 Skills Improvement Platform
+# Skills Tracker
 
-Plataforma fullstack moderna desarrollada con **Angular + Node.js
-(NestJS) + Prisma**, creada con el objetivo de mejorar y profundizar
-conocimientos en tecnologías frontend y backend modernas siguiendo
-buenas prácticas de arquitectura, tipado estricto y escalabilidad.
+Aplicacion fullstack para registrar skills, organizarlas en una jerarquia y seguir el progreso de aprendizaje de cada usuario sobre una escala fija de niveles.
 
----
+El repositorio esta montado como monorepo con Nx y separa frontend, API y pruebas e2e.
 
-## 🎯 Objetivo del Proyecto
+## Estado Actual
 
-Este proyecto tiene como finalidad:
+Hoy el proyecto ya incluye:
 
-- Mejorar habilidades avanzadas en Angular (signals, standalone
-  components, lazy loading, reactive forms).
-- Consolidar conocimientos backend con NestJS.
-- Implementar ORM moderno con Prisma.
-- Aplicar arquitectura limpia y escalable.
-- Utilizar Nx para estructuración monorepo.
-- Configurar un entorno profesional con:
-  - Conventional commits
-  - Husky + lint-staged
-  - EditorConfig
-  - CI/CD ready
-  - Strict typing en TypeScript
+- autenticacion con JWT
+- catalogo de skills con soft delete y soporte de sub-skills
+- relacion `user-skill` para seguir progreso por usuario
+- dashboard y pantallas principales protegidas por login
+- documentacion Swagger para la API
+- tests unitarios y e2e en backend
+- tests frontend iniciales sobre `user-skills`
 
----
-
-## 🏗️ Arquitectura
-
-Monorepo gestionado con **Nx**:
-
-    apps/
-      web/      → Frontend Angular
-      api/      → Backend NestJS
-    packages/
-      shared/   → Tipos y utilidades compartidas
-
-### Stack Tecnológico
+## Stack
 
 ### Frontend
 
-- Angular
-- TypeScript (strict mode)
-- RxJS
-- Signals
-- Reactive Forms
+- Angular 21
+- standalone components
+- signals
+- Angular Router
+- SCSS
 
 ### Backend
 
-- Node.js
-- NestJS
-- Prisma ORM
-- PostgreSQL (configurable)
+- NestJS 11
+- Prisma
+- PostgreSQL
+- JWT con Passport
+- Swagger
 
 ### Tooling
 
 - Nx
+- pnpm
 - ESLint
 - Prettier
 - Husky
-- GitHub Actions (CI ready)
+- lint-staged
+- Vitest types para tests frontend
+- Jest para backend
+- Playwright configurado en el workspace
 
----
+## Estructura
 
-## ⚙️ Instalación
-
-### 1️⃣ Clonar el repositorio
-
-```bash
-git clone <repo-url>
-cd <project-name>
+```text
+apps/
+  web/       Frontend Angular
+  api/       Backend NestJS + Prisma
+  api-e2e/   Pruebas e2e de la API
+  web-e2e/   Base de pruebas e2e del frontend
 ```
 
-### 2️⃣ Instalar dependencias
+## Modelo De Progreso
 
-```bash
-npm install
+El sistema usa una escala fija y compartida para todas las skills:
+
+- `BEGINNER`
+- `BASIC`
+- `INTERMEDIATE`
+- `UPPER_INTERMEDIATE`
+- `ADVANCED`
+- `EXPERT`
+
+No hay targets personalizados por skill o por usuario. El progreso se calcula siempre contra el nivel maximo `EXPERT`.
+
+## Requisitos
+
+- Node.js 20+
+- pnpm
+- PostgreSQL
+
+## Variables De Entorno
+
+Crea un archivo `.env` en la raiz del repo.
+
+Ejemplo minimo:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/skills_tracker?schema=public"
+JWT_SECRET="replace-with-a-secure-secret"
+JWT_EXPIRES_IN="1h"
+PORT="3000"
 ```
 
----
+Notas:
 
-## 🔐 Variables de Entorno
+- `DATABASE_URL` es obligatoria para Prisma.
+- `JWT_SECRET` es obligatoria. La API falla al iniciar si no existe.
+- Para tests e2e tambien se usa `.env.test` cuando `NODE_ENV=test`.
 
-Crear un archivo `.env` basado en `.env.example`:
-
-    DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/db?schema=public"
-    JWT_SECRET="your_secret"
-
----
-
-## ▶️ Ejecutar el Proyecto
-
-### Frontend
+## Instalacion
 
 ```bash
-npx nx serve web
+pnpm install
 ```
 
-### Backend
+## Base De Datos
+
+Aplicar migraciones en desarrollo:
 
 ```bash
-npx nx serve api
+pnpm prisma:migrate:dev
 ```
 
----
-
-## 🧪 Testing
+Resetear la base de desarrollo:
 
 ```bash
-npx nx test web
-npx nx test api
+pnpm prisma:reset:dev
 ```
 
----
+## Ejecutar El Proyecto
 
-## 🏷️ Convención de Commits
+Frontend:
 
-Se utiliza **Conventional Commits**:
+```bash
+pnpm exec nx serve web
+```
 
-- `feat:` nueva funcionalidad
-- `fix:` corrección de bug
-- `refactor:` mejora interna sin cambiar comportamiento
-- `chore:` configuración / tooling
-- `docs:` documentación
-- `test:` tests
+Backend:
 
-Ejemplo:
+```bash
+pnpm exec nx serve api
+```
 
-    feat(api): create users endpoint
+Por defecto:
 
----
+- frontend: `http://localhost:4200`
+- api: `http://localhost:3000`
+- swagger: `http://localhost:3000/api/docs`
 
-## 📈 Buenas Prácticas Implementadas
+## Rutas Principales Del Frontend
 
-- Strict TypeScript (sin `any`)
-- Arquitectura modular
-- Servicios con responsabilidad única
-- Lazy loading en rutas
-- Estado manejado con signals
-- Validación de DTOs en backend
-- Separación clara frontend/backend
-- Variables de entorno protegidas
+- `/login`
+- `/dashboard`
+- `/skills`
+- `/my-skills`
+- `/profile`
 
----
+Las rutas principales estan protegidas por autenticacion.
 
-## 🚧 Roadmap
+## Modulos Principales De La API
 
-- [ ] Autenticación JWT
-- [ ] Sistema de roles
-- [ ] Gestión de perfiles
-- [ ] Módulo de Skills dinámico
-- [ ] Tests unitarios y e2e completos
-- [ ] CI automatizado completo
-- [ ] Dockerización
+### Auth
 
----
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/me`
 
-## 📚 Motivación
+### Users
 
-Este proyecto no es solo una aplicación funcional, sino un entorno de
-experimentación profesional para:
+- `GET /users`
+- `GET /users/:id`
+- `PATCH /users/:id`
 
-- Probar nuevas features del ecosistema Angular.
-- Aplicar patrones de arquitectura backend modernos.
-- Simular un entorno real de desarrollo profesional.
+### Skills
 
----
+- `POST /skills`
+- `GET /skills`
+- `GET /skills/roots`
+- `GET /skills/:id`
+- `PATCH /skills/:id`
+- `DELETE /skills/:id`
+- `PATCH /skills/:id/restore`
 
-## 👨‍💻 Autor
+### User Skills
 
-Proyecto desarrollado como laboratorio personal de mejora continua en
-desarrollo fullstack.
+- `POST /user-skills`
+- `GET /user-skills`
+- `GET /user-skills/:id`
+- `PATCH /user-skills/:id`
+- `DELETE /user-skills/:id`
+- `GET /users/:userId/skills`
 
----
+## Testing
 
-## 📄 Licencia
+Backend unit tests:
 
-Uso personal / educativo.
+```bash
+pnpm exec nx test api
+```
 
-CI check registered
+Frontend unit tests:
+
+```bash
+pnpm exec nx test web
+```
+
+API e2e:
+
+```bash
+pnpm exec nx test api-e2e
+```
+
+En este repo ya hay buena cobertura del backend y una base inicial de tests frontend centrados en `user-skills`.
+
+## Formato Y Calidad
+
+Formatear:
+
+```bash
+pnpm format
+```
+
+Verificar formato:
+
+```bash
+pnpm format:check
+```
+
+## Roadmap
+
+Pendientes razonables del proyecto:
+
+- ampliar cobertura frontend
+- endurecer manejo de errores y feedback de UX
+- completar la pantalla de perfil
+- agregar autorizacion por roles si el dominio lo necesita
+- sumar CI automatizada para lint, tests y build
+- dockerizar el entorno
+
+## Objetivo Del Proyecto
+
+El repo funciona como laboratorio serio para practicar una base fullstack moderna con:
+
+- arquitectura modular
+- tipado estricto
+- separacion clara entre frontend y backend
+- validacion consistente en la API
+- modelado de dominio incremental
+
+## Licencia
+
+Uso personal y educativo.
