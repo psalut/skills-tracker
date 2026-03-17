@@ -1,5 +1,11 @@
 import { AuthUser } from '../../core/auth/auth.model';
-export type SkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+export type SkillLevel =
+  | 'BEGINNER'
+  | 'BASIC'
+  | 'INTERMEDIATE'
+  | 'UPPER_INTERMEDIATE'
+  | 'ADVANCED'
+  | 'EXPERT';
 
 export type SkillCategory =
   | 'FRONTEND'
@@ -45,7 +51,6 @@ export interface UserSkill {
   userId: string;
   skillId: string;
   currentLevel: SkillLevel | null;
-  targetLevel: SkillLevel | null;
   notes: string | null;
   createdAt: string;
   updatedAt: string;
@@ -56,12 +61,10 @@ export interface UserSkill {
 export interface CreateUserSkillRequest {
   skillId: string;
   currentLevel?: SkillLevel | null;
-  targetLevel?: SkillLevel | null;
   notes?: string | null;
 }
 
 export interface UpdateUserSkillRequest {
   currentLevel?: SkillLevel | null;
-  targetLevel?: SkillLevel | null;
   notes?: string | null;
 }

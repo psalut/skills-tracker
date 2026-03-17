@@ -40,7 +40,6 @@ describe('UserSkills API (e2e)', () => {
       {
         skillId: skill.id,
         currentLevel: 'BEGINNER',
-        targetLevel: 'ADVANCED',
         notes: 'Practicing every day.',
       },
       { headers: authHeaders },
@@ -51,7 +50,6 @@ describe('UserSkills API (e2e)', () => {
       userId: user.id,
       skillId: skill.id,
       currentLevel: 'BEGINNER',
-      targetLevel: 'ADVANCED',
       notes: 'Practicing every day.',
     });
     expect(response.data.id).toEqual(expect.any(String));
@@ -76,7 +74,6 @@ describe('UserSkills API (e2e)', () => {
       userId: user.id,
       skillId: skill.id,
       currentLevel: null,
-      targetLevel: null,
       notes: null,
     });
   });
@@ -314,7 +311,6 @@ describe('UserSkills API (e2e)', () => {
       {
         skillId: skill.id,
         currentLevel: 'BEGINNER',
-        targetLevel: 'INTERMEDIATE',
         notes: 'Initial notes',
       },
       { headers: authHeaders },
@@ -324,7 +320,6 @@ describe('UserSkills API (e2e)', () => {
       `/user-skills/${created.data.id}`,
       {
         currentLevel: 'ADVANCED',
-        targetLevel: 'EXPERT',
         notes: 'Improved a lot',
       },
       { headers: authHeaders },
@@ -336,12 +331,11 @@ describe('UserSkills API (e2e)', () => {
       userId: user.id,
       skillId: skill.id,
       currentLevel: 'ADVANCED',
-      targetLevel: 'EXPERT',
       notes: 'Improved a lot',
     });
   });
 
-  it('PATCH /user-skills/:id should return 400 for invalid targetLevel enum', async () => {
+  it('PATCH /user-skills/:id should return 400 for invalid currentLevel enum', async () => {
     const { authHeaders } = await registerAndLoginUser();
     const skill = await createTestSkill();
 
@@ -356,7 +350,7 @@ describe('UserSkills API (e2e)', () => {
     const response = await axios.patch(
       `/user-skills/${created.data.id}`,
       {
-        targetLevel: 'LEGEND',
+        currentLevel: 'LEGEND',
       },
       { headers: authHeaders },
     );

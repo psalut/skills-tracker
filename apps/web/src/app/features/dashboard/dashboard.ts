@@ -6,10 +6,13 @@ import { UserSkillsService } from '../user-skills/user-skills.service';
 const SKILL_LEVEL_ORDER: Array<SkillLevel | null> = [
   null,
   'BEGINNER',
+  'BASIC',
   'INTERMEDIATE',
+  'UPPER_INTERMEDIATE',
   'ADVANCED',
   'EXPERT',
 ];
+const MAX_SKILL_LEVEL: SkillLevel = 'EXPERT';
 
 type DashboardListItem = {
   id: string;
@@ -61,7 +64,7 @@ export class Dashboard implements OnInit {
 
   readonly needsAttention = computed(() =>
     this.skills()
-      .filter((skill) => this.isInProgress(skill) && skill.targetLevel !== null)
+      .filter((skill) => this.isInProgress(skill))
       .map((skill) => this.toListItem(skill))
       .sort(
         (left, right) =>
@@ -74,7 +77,7 @@ export class Dashboard implements OnInit {
 
   readonly closestToTarget = computed(() =>
     this.skills()
-      .filter((skill) => this.isInProgress(skill) && skill.targetLevel !== null)
+      .filter((skill) => this.isInProgress(skill))
       .map((skill) => this.toListItem(skill))
       .sort(
         (left, right) =>
@@ -116,13 +119,13 @@ export class Dashboard implements OnInit {
 
   private toListItem(skill: UserSkill): DashboardListItem {
     const currentIndex = this.getLevelIndex(skill.currentLevel);
-    const targetIndex = this.getLevelIndex(skill.targetLevel);
+    const targetIndex = this.getLevelIndex(MAX_SKILL_LEVEL);
 
     return {
       id: skill.id,
       name: skill.skill.name,
       currentLabel: this.getLevelLabel(skill.currentLevel),
-      targetLabel: this.getLevelLabel(skill.targetLevel),
+      targetLabel: this.getLevelLabel(MAX_SKILL_LEVEL),
       progress: this.getProgress(skill),
       gap: Math.max(targetIndex - currentIndex, 0),
     };
@@ -130,21 +133,19 @@ export class Dashboard implements OnInit {
 
   private isCompleted(skill: UserSkill): boolean {
     return (
-      skill.currentLevel !== null &&
-      skill.targetLevel !== null &&
-      skill.currentLevel === skill.targetLevel
+      skill.currentLevel !== null && skill.currentLevel === MAX_SKILL_LEVEL
     );
   }
 
   private isInProgress(skill: UserSkill): boolean {
     return (
-      skill.targetLevel !== null && skill.currentLevel !== skill.targetLevel
+      skill.currentLevel !== null && skill.currentLevel !== MAX_SKILL_LEVEL
     );
   }
 
   private getProgress(skill: UserSkill): number {
     const currentIndex = this.getLevelIndex(skill.currentLevel);
-    const targetIndex = this.getLevelIndex(skill.targetLevel);
+    const targetIndex = this.getLevelIndex(MAX_SKILL_LEVEL);
 
     if (targetIndex <= 0) {
       return 0;

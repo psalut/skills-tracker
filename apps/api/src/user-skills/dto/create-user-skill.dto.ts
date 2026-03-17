@@ -20,15 +20,6 @@ export class CreateUserSkillDto {
   currentLevel?: SkillLevel;
 
   @ApiPropertyOptional({
-    description: 'Target level the user wants to reach for this skill',
-    enum: SkillLevel,
-    example: SkillLevel.ADVANCED,
-  })
-  @IsOptional()
-  @IsEnum(SkillLevel)
-  targetLevel?: SkillLevel;
-
-  @ApiPropertyOptional({
     description: 'Additional notes about the user progress on this skill',
     example: 'Practicing with personal projects and reading official docs.',
     maxLength: 1000,
