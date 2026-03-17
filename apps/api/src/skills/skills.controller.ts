@@ -6,8 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import {
+  ApiBearerAuth,
   ApiBadRequestResponse,
   ApiBody,
   ApiCreatedResponse,
@@ -17,16 +20,23 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { SkillsService } from './skills.service';
 
 @ApiTags('Skills')
+@ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard)
 @Controller('skills')
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Create a new skill',
     description:
@@ -91,6 +101,8 @@ export class SkillsController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Update a skill',
   })
@@ -115,6 +127,8 @@ export class SkillsController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Delete a skill',
     description:
@@ -139,6 +153,8 @@ export class SkillsController {
   }
 
   @Patch(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Restore a soft-deleted skill',
     description:

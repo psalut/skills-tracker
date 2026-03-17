@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { User } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import type { UserPublic } from './users.types';
@@ -30,6 +31,7 @@ export class UsersService {
           firstName: dto.firstName,
           lastName: dto.lastName,
           password: hashedPassword,
+          role: UserRole.USER,
         },
       });
 

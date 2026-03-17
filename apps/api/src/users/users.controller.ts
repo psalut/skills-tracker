@@ -1,7 +1,12 @@
 import { Body, Controller, Get, Patch, Param, UseGuards } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { SelfOrAdmin } from '../auth/decorators/self-or-admin.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { SelfOrAdminGuard } from '../auth/guards/self-or-admin.guard';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -19,6 +24,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: 200,
@@ -29,6 +36,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @SelfOrAdmin('id')
+  @UseGuards(SelfOrAdminGuard)
   @ApiOperation({ summary: 'Get user by id' })
   @ApiParam({
     name: 'id',
@@ -48,6 +57,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @SelfOrAdmin('id')
+  @UseGuards(SelfOrAdminGuard)
   @ApiOperation({ summary: 'Update user' })
   @ApiParam({
     name: 'id',

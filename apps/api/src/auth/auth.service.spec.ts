@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
-import type { User } from '@prisma/client';
+import { UserRole, type User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import type { UserPublic } from '../users/users.types';
@@ -52,6 +52,7 @@ describe('AuthService', () => {
         email: 'pablo@mail.com',
         firstName: 'Pablo',
         lastName: 'Salut',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-06T20:00:00.000Z'),
         updatedAt: new Date('2026-03-06T20:00:00.000Z'),
       };
@@ -92,6 +93,7 @@ describe('AuthService', () => {
         firstName: 'Pablo',
         lastName: 'Salut',
         password: 'hashed_password',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-06T20:00:00.000Z'),
         updatedAt: new Date('2026-03-06T20:00:00.000Z'),
       };
@@ -124,6 +126,7 @@ describe('AuthService', () => {
         firstName: 'Pablo',
         lastName: 'Salut',
         password: 'hashed_password',
+        role: UserRole.ADMIN,
         createdAt: new Date('2026-03-06T20:00:00.000Z'),
         updatedAt: new Date('2026-03-06T20:00:00.000Z'),
       };
@@ -148,6 +151,7 @@ describe('AuthService', () => {
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith({
         sub: 'u1',
         email: 'pablo@mail.com',
+        role: UserRole.ADMIN,
       });
 
       expect(result).toEqual({
@@ -163,6 +167,7 @@ describe('AuthService', () => {
         email: 'pablo@mail.com',
         firstName: 'Pablo',
         lastName: 'Salut',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-06T20:00:00.000Z'),
         updatedAt: new Date('2026-03-06T20:00:00.000Z'),
       };

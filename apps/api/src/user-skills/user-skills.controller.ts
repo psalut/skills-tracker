@@ -10,6 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import {
   ApiBearerAuth,
   ApiBadRequestResponse,
@@ -23,16 +24,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../auth/auth.types';
 import { UserSkillsService } from './user-skills.service';
 import { CreateUserSkillDto } from './dto/create-user-skill.dto';
 import { UpdateUserSkillDto } from './dto/update-user-skill.dto';
-
-type AuthenticatedRequest = Request & {
-  user: {
-    sub: string;
-    email: string;
-  };
-};
 
 @ApiTags('User Skills')
 @ApiBearerAuth('JWT-auth')
@@ -119,7 +114,7 @@ export class UserSkillsController {
     @Req() req: AuthenticatedRequest,
     @Param('userId') userId: string,
   ) {
-    if (userId !== req.user.sub) {
+    if (req.user.role !== UserRole.ADMIN && userId !== req.user.sub) {
       throw new ForbiddenException('You can only access your own skills');
     }
 
