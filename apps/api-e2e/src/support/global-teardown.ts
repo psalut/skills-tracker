@@ -1,6 +1,8 @@
 import { existsSync, readFileSync, unlinkSync } from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { disconnectSkillFactoryPrisma } from './factories/skill.factory';
+import { disconnectUserFactoryPrisma } from './factories/user.factory';
 
 /* eslint-disable */
 
@@ -28,6 +30,9 @@ function killPid(pid: number): void {
 }
 
 module.exports = async function () {
+  await disconnectUserFactoryPrisma();
+  await disconnectSkillFactoryPrisma();
+
   if (!existsSync(pidFile)) return;
 
   const raw = readFileSync(pidFile, 'utf-8').trim();
