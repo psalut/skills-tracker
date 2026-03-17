@@ -128,7 +128,7 @@ export class UserSkills implements OnInit {
       this.replaceSkill(updatedSkill);
     } catch {
       this.patchSkill(skill.id, { currentLevel: previousLevel });
-      this.loadErrorMessage.set(
+      this.updateErrorMessage.set(
         `Could not update ${skill.skill.name} right now.`,
       );
     } finally {
