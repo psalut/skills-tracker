@@ -3,9 +3,7 @@ import { UserSkill } from '../skills/skill.model';
 import { UserSkills } from './user-skills';
 import { UserSkillsService } from './user-skills.service';
 
-function createUserSkill(
-  overrides: Partial<UserSkill> = {},
-): UserSkill {
+function createUserSkill(overrides: Partial<UserSkill> = {}): UserSkill {
   return {
     id: 'user-skill-1',
     userId: 'user-1',
@@ -32,13 +30,21 @@ function createUserSkill(
 describe('UserSkills', () => {
   async function setup({
     getUserSkills = async () => [],
-    updateUserSkill = async (_id: string, _payload: { currentLevel?: UserSkill['currentLevel']; notes?: string | null }) =>
-      createUserSkill(),
+    updateUserSkill = async (
+      _id: string,
+      _payload: {
+        currentLevel?: UserSkill['currentLevel'];
+        notes?: string | null;
+      },
+    ) => createUserSkill(),
   }: {
     getUserSkills?: () => Promise<UserSkill[]>;
     updateUserSkill?: (
       id: string,
-      payload: { currentLevel?: UserSkill['currentLevel']; notes?: string | null },
+      payload: {
+        currentLevel?: UserSkill['currentLevel'];
+        notes?: string | null;
+      },
     ) => Promise<UserSkill>;
   } = {}) {
     const userSkillsService = {
@@ -71,9 +77,9 @@ describe('UserSkills', () => {
   it('calculates progress based on the fixed mastery scale', async () => {
     const { component } = await setup();
 
-    expect(
-      component.getProgress(createUserSkill({ currentLevel: null })),
-    ).toBe(0);
+    expect(component.getProgress(createUserSkill({ currentLevel: null }))).toBe(
+      0,
+    );
     expect(
       component.getProgress(createUserSkill({ currentLevel: 'INTERMEDIATE' })),
     ).toBe(50);
@@ -86,7 +92,9 @@ describe('UserSkills', () => {
     const { component } = await setup();
 
     expect(
-      component.canDecrease(createUserSkill({ id: 'beginner', currentLevel: null })),
+      component.canDecrease(
+        createUserSkill({ id: 'beginner', currentLevel: null }),
+      ),
     ).toBe(false);
     expect(
       component.canIncrease(
