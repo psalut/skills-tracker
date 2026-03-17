@@ -153,9 +153,10 @@ export class Skills implements OnInit {
     this.saveErrorMessage.set(null);
 
     try {
-      if (this.formMode() === 'edit' && this.editingSkill()) {
+      const skill = this.editingSkill();
+      if (this.formMode() === 'edit' && skill) {
         const updatedSkill = await this.skillsService.updateSkill(
-          this.editingSkill()!.id,
+          skill.id,
           this.toUpdatePayload(payload),
         );
         this.replaceSkill(updatedSkill);

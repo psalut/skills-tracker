@@ -35,7 +35,7 @@ type SkillFormValue = {
           <button
             type="button"
             class="button skill-form__ghost"
-            (click)="cancel.emit()"
+            (click)="cancelled.emit()"
           >
             Cancel
           </button>
@@ -113,7 +113,7 @@ type SkillFormValue = {
             <button
               type="button"
               class="button skill-form__ghost"
-              (click)="cancel.emit()"
+              (click)="cancelled.emit()"
             >
               Cancel
             </button>
@@ -217,7 +217,7 @@ export class SkillFormComponent implements OnChanges {
     isActive: boolean;
     parentSkillId?: string | null;
   }>();
-  @Output() readonly cancel = new EventEmitter<void>();
+  @Output() readonly cancelled = new EventEmitter<void>();
 
   readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
