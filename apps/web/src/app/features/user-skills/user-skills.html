@@ -4,8 +4,8 @@
       <p class="user-skills__eyebrow">My skills</p>
       <h1 class="page__title">Your current skill map.</h1>
       <p class="page__description">
-        Review your current level, the shared skill scale, and progress for each
-        skill you are tracking.
+        Review your current level, the shared skill scale, and mastery progress
+        for each skill you are tracking.
       </p>
     </div>
   </header>
@@ -36,7 +36,7 @@
     </article>
 
     <article class="user-skills__stat surface section">
-      <span class="user-skills__stat-label">Reached target</span>
+      <span class="user-skills__stat-label">Reached mastery</span>
       <strong class="user-skills__stat-value">{{ stats().completed }}</strong>
     </article>
   </section>
@@ -89,7 +89,7 @@
           <dd>{{ getLevelLabel(userSkill.currentLevel) }}</dd>
         </div>
         <div>
-          <dt>Max</dt>
+          <dt>Mastery</dt>
           <dd>{{ getLevelLabel('EXPERT') }}</dd>
         </div>
       </dl>
