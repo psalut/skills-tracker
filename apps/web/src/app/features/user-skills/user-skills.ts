@@ -34,7 +34,8 @@ export class UserSkills implements OnInit {
     return {
       total: skills.length,
       inProgress: skills.filter(
-        (skill) => skill.currentLevel !== null && skill.currentLevel !== MAX_SKILL_LEVEL,
+        (skill) =>
+          skill.currentLevel !== null && skill.currentLevel !== MAX_SKILL_LEVEL,
       ).length,
       completed: skills.filter(
         (skill) => skill.currentLevel === MAX_SKILL_LEVEL,

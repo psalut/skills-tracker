@@ -138,7 +138,9 @@ export class Dashboard implements OnInit {
   }
 
   private isInProgress(skill: UserSkill): boolean {
-    return skill.currentLevel !== null && skill.currentLevel !== MAX_SKILL_LEVEL;
+    return (
+      skill.currentLevel !== null && skill.currentLevel !== MAX_SKILL_LEVEL
+    );
   }
 
   private getProgress(skill: UserSkill): number {
