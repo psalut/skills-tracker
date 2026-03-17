@@ -5,10 +5,13 @@ import { UserSkillsService } from './user-skills.service';
 const SKILL_LEVELS: Array<SkillLevel | null> = [
   null,
   'BEGINNER',
+  'BASIC',
   'INTERMEDIATE',
+  'UPPER_INTERMEDIATE',
   'ADVANCED',
   'EXPERT',
 ];
+const MAX_SKILL_LEVEL: SkillLevel = 'EXPERT';
 
 @Component({
   selector: 'app-user-skills',
@@ -31,13 +34,10 @@ export class UserSkills implements OnInit {
     return {
       total: skills.length,
       inProgress: skills.filter(
-        (skill) => skill.currentLevel !== skill.targetLevel,
+        (skill) => skill.currentLevel !== MAX_SKILL_LEVEL,
       ).length,
       completed: skills.filter(
-        (skill) =>
-          skill.currentLevel &&
-          skill.targetLevel &&
-          skill.currentLevel === skill.targetLevel,
+        (skill) => skill.currentLevel === MAX_SKILL_LEVEL,
       ).length,
     };
   });
@@ -62,8 +62,8 @@ export class UserSkills implements OnInit {
 
   canIncrease(skill: UserSkill): boolean {
     return (
-      SKILL_LEVELS.indexOf(skill.currentLevel) < SKILL_LEVELS.length - 1 &&
-      !this.isUpdating(skill.id)
+      SKILL_LEVELS.indexOf(skill.currentLevel) <
+        SKILL_LEVELS.indexOf(MAX_SKILL_LEVEL) && !this.isUpdating(skill.id)
     );
   }
 
@@ -71,9 +71,7 @@ export class UserSkills implements OnInit {
     const current = skill.currentLevel
       ? SKILL_LEVELS.indexOf(skill.currentLevel)
       : 0;
-    const target = skill.targetLevel
-      ? SKILL_LEVELS.indexOf(skill.targetLevel)
-      : SKILL_LEVELS.length - 1;
+    const target = SKILL_LEVELS.indexOf(MAX_SKILL_LEVEL);
 
     if (target <= 0) {
       return 0;

@@ -48,14 +48,14 @@
       <div class="dashboard__section-header">
         <div>
           <h2>Needs attention</h2>
-          <p>Skills with the biggest gap to their target level.</p>
+          <p>Skills with the biggest gap to their maximum level.</p>
         </div>
       </div>
 
       @if (needsAttention().length === 0) {
       <p class="dashboard__empty-copy">
         Nothing needs attention right now. Either your skills are completed or
-        they do not have a target level yet.
+        they are already at their maximum level.
       </p>
       } @else {
       <div class="dashboard__skill-list">
@@ -91,14 +91,14 @@
     <article class="surface section">
       <div class="dashboard__section-header">
         <div>
-          <h2>Closest to target</h2>
+          <h2>Closest to max</h2>
           <p>Skills that are nearest to completion.</p>
         </div>
       </div>
 
       @if (closestToTarget().length === 0) {
       <p class="dashboard__empty-copy">
-        There are no in-progress skills with a target level yet.
+        There are no in-progress skills right now.
       </p>
       } @else {
       <div class="dashboard__skill-list">

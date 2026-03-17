@@ -19,7 +19,9 @@ model User {
 
 enum SkillLevel {
   BEGINNER
+  BASIC
   INTERMEDIATE
+  UPPER_INTERMEDIATE
   ADVANCED
   EXPERT
 }
@@ -61,7 +63,6 @@ model UserSkill {
   userId       String
   skillId      String
   currentLevel SkillLevel?
-  targetLevel  SkillLevel?
   notes        String?     @db.Text
 
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)

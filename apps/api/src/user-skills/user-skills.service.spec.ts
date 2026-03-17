@@ -60,7 +60,6 @@ describe('UserSkillsService', () => {
     const createDto = {
       skillId,
       currentLevel: SkillLevel.BEGINNER,
-      targetLevel: SkillLevel.ADVANCED,
       notes: 'Practicing every day.',
     };
 
@@ -72,7 +71,6 @@ describe('UserSkillsService', () => {
         userId,
         skillId,
         currentLevel: SkillLevel.BEGINNER,
-        targetLevel: SkillLevel.ADVANCED,
         notes: 'Practicing every day.',
       };
 
@@ -105,7 +103,6 @@ describe('UserSkillsService', () => {
           userId,
           skillId,
           currentLevel: SkillLevel.BEGINNER,
-          targetLevel: SkillLevel.ADVANCED,
           notes: 'Practicing every day.',
         },
         include: {
@@ -295,7 +292,6 @@ describe('UserSkillsService', () => {
       const userId = 'user-1';
       const updateDto = {
         currentLevel: SkillLevel.ADVANCED,
-        targetLevel: SkillLevel.EXPERT,
         notes: 'Improved a lot',
       };
       const existingUserSkill = { id, userId, skillId: 'skill-1' };
