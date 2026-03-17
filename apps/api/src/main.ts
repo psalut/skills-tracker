@@ -7,9 +7,9 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const envFile =
   process.env.NODE_ENV === 'test'
@@ -39,14 +39,14 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Skills Tracker API')
-    .setDescription('API para autenticación, usuarios y seguimiento de skills')
+    .setDescription('API para autenticacion, usuarios y seguimiento de skills')
     .setVersion('1.0.0')
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        description: 'Pegá acá tu access token JWT',
+        description: 'Pega aca tu access token JWT',
       },
       'JWT-auth',
     )
@@ -60,4 +60,5 @@ async function bootstrap() {
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
   await app.listen(port);
 }
+
 void bootstrap();
