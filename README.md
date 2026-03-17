@@ -191,13 +191,19 @@ Frontend unit tests:
 pnpm exec nx test web
 ```
 
-API e2e:
+API end-to-end tests:
 
 ```bash
-pnpm exec nx test api-e2e
+pnpm exec nx e2e api-e2e
 ```
 
-En este repo ya hay buena cobertura del backend y una base inicial de tests frontend centrados en `user-skills`.
+Frontend end-to-end tests:
+
+```bash
+pnpm exec nx e2e web-e2e
+```
+
+En este repo el backend ya tiene cobertura unitaria y e2e. En frontend hay tests unitarios iniciales y una base de Playwright para seguir ampliando cobertura end-to-end.
 
 ## Formato Y Calidad
 
