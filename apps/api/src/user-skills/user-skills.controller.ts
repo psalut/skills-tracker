@@ -45,7 +45,7 @@ export class UserSkillsController {
   @ApiOperation({
     summary: 'Create a user-skill relation',
     description:
-      'Creates a relation between a user and a skill, optionally storing current level, target level, and notes.',
+      'Creates a relation between a user and a skill, optionally storing current level and notes.',
   })
   @ApiBody({ type: CreateUserSkillDto })
   @ApiCreatedResponse({
@@ -130,7 +130,7 @@ export class UserSkillsController {
   @ApiOperation({
     summary: 'Update a user-skill relation',
     description:
-      'Updates current level, target level, and/or notes for an existing user-skill relation.',
+      'Updates current level and/or notes for an existing user-skill relation.',
   })
   @ApiParam({
     name: 'id',

@@ -72,13 +72,13 @@ export class UserSkills implements OnInit {
     const current = skill.currentLevel
       ? SKILL_LEVELS.indexOf(skill.currentLevel)
       : 0;
-    const target = SKILL_LEVELS.indexOf(MAX_SKILL_LEVEL);
+    const maxLevel = SKILL_LEVELS.indexOf(MAX_SKILL_LEVEL);
 
-    if (target <= 0) {
+    if (maxLevel <= 0) {
       return 0;
     }
 
-    return Math.min(Math.round((current / target) * 100), 100);
+    return Math.min(Math.round((current / maxLevel) * 100), 100);
   }
 
   async decreaseProgress(skill: UserSkill): Promise<void> {

@@ -4,8 +4,8 @@
       <p class="dashboard__eyebrow">My skills overview</p>
       <h1 class="page__title">Your current learning status</h1>
       <p class="page__description">
-        Review what is moving, what is blocked, and what is closest to target
-        based on your tracked skills.
+        Review what is moving, what needs attention, and how each tracked skill
+        is advancing across the shared mastery progress scale.
       </p>
     </div>
   </header>
@@ -48,7 +48,7 @@
       <div class="dashboard__section-header">
         <div>
           <h2>Needs attention</h2>
-          <p>Skills with the biggest gap to their maximum level.</p>
+          <p>Skills with the most mastery levels still left to complete.</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@
           <div class="dashboard__skill-top">
             <div>
               <h3>{{ skill.name }}</h3>
-              <p>{{ skill.currentLabel }} to {{ skill.targetLabel }}</p>
+              <p>{{ skill.currentLabel }} to {{ skill.masteryLabel }}</p>
             </div>
             <span class="dashboard__skill-percent">{{ skill.progress }}%</span>
           </div>
@@ -91,23 +91,23 @@
     <article class="surface section">
       <div class="dashboard__section-header">
         <div>
-          <h2>Closest to max</h2>
-          <p>Skills that are nearest to completion.</p>
+          <h2>Closest to mastery</h2>
+          <p>Skills that are nearest to the top of the shared level scale.</p>
         </div>
       </div>
 
-      @if (closestToTarget().length === 0) {
+      @if (closestToMastery().length === 0) {
       <p class="dashboard__empty-copy">
         There are no in-progress skills right now.
       </p>
       } @else {
       <div class="dashboard__skill-list">
-        @for (skill of closestToTarget(); track trackByItem($index, skill)) {
+        @for (skill of closestToMastery(); track trackByItem($index, skill)) {
         <div class="dashboard__skill-item">
           <div class="dashboard__skill-top">
             <div>
               <h3>{{ skill.name }}</h3>
-              <p>{{ skill.currentLabel }} to {{ skill.targetLabel }}</p>
+              <p>{{ skill.currentLabel }} to {{ skill.masteryLabel }}</p>
             </div>
             <span class="dashboard__skill-percent">{{ skill.progress }}%</span>
           </div>

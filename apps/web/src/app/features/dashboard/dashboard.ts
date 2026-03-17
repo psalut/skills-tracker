@@ -18,9 +18,9 @@ type DashboardListItem = {
   id: string;
   name: string;
   currentLabel: string;
-  targetLabel: string;
+  masteryLabel: string;
   progress: number;
-  gap: number;
+  remainingLevels: number;
 };
 
 @Component({
@@ -68,20 +68,20 @@ export class Dashboard implements OnInit {
       .map((skill) => this.toListItem(skill))
       .sort(
         (left, right) =>
-          right.gap - left.gap ||
+          right.remainingLevels - left.remainingLevels ||
           left.progress - right.progress ||
           left.name.localeCompare(right.name),
       )
       .slice(0, 4),
   );
 
-  readonly closestToTarget = computed(() =>
+  readonly closestToMastery = computed(() =>
     this.skills()
       .filter((skill) => this.isInProgress(skill))
       .map((skill) => this.toListItem(skill))
       .sort(
         (left, right) =>
-          left.gap - right.gap ||
+          left.remainingLevels - right.remainingLevels ||
           right.progress - left.progress ||
           left.name.localeCompare(right.name),
       )
@@ -119,15 +119,15 @@ export class Dashboard implements OnInit {
 
   private toListItem(skill: UserSkill): DashboardListItem {
     const currentIndex = this.getLevelIndex(skill.currentLevel);
-    const targetIndex = this.getLevelIndex(MAX_SKILL_LEVEL);
+    const maxLevelIndex = this.getLevelIndex(MAX_SKILL_LEVEL);
 
     return {
       id: skill.id,
       name: skill.skill.name,
       currentLabel: this.getLevelLabel(skill.currentLevel),
-      targetLabel: this.getLevelLabel(MAX_SKILL_LEVEL),
+      masteryLabel: this.getLevelLabel(MAX_SKILL_LEVEL),
       progress: this.getProgress(skill),
-      gap: Math.max(targetIndex - currentIndex, 0),
+      remainingLevels: Math.max(maxLevelIndex - currentIndex, 0),
     };
   }
 
@@ -145,13 +145,13 @@ export class Dashboard implements OnInit {
 
   private getProgress(skill: UserSkill): number {
     const currentIndex = this.getLevelIndex(skill.currentLevel);
-    const targetIndex = this.getLevelIndex(MAX_SKILL_LEVEL);
+    const maxLevelIndex = this.getLevelIndex(MAX_SKILL_LEVEL);
 
-    if (targetIndex <= 0) {
+    if (maxLevelIndex <= 0) {
       return 0;
     }
 
-    return Math.min(Math.round((currentIndex / targetIndex) * 100), 100);
+    return Math.min(Math.round((currentIndex / maxLevelIndex) * 100), 100);
   }
 
   private getLevelIndex(level: SkillLevel | null): number {
