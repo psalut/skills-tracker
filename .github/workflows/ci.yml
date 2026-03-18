@@ -53,7 +53,7 @@ jobs:
 
       - name: Prepare test env
         run: |
-          cat <<'EOF' > .env.test
+          cat <<EOF > .env.test
           DATABASE_URL=${DATABASE_URL}
           DATABASE_DIRECT_URL=${DATABASE_DIRECT_URL}
           NEON_TEST_HOST_HINT=${NEON_TEST_HOST_HINT}
