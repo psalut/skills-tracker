@@ -10,10 +10,11 @@ import { SelfOrAdminGuard } from '../auth/guards/self-or-admin.guard';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
-  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('users')
@@ -26,10 +27,16 @@ export class UsersController {
   @Get()
   @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({
+    summary: 'Get all users',
+    description: 'Restricted to ADMIN users.',
+  })
   @ApiResponse({
     status: 200,
     description: 'List of users',
+  })
+  @ApiForbiddenResponse({
+    description: 'Only ADMIN users can list all users.',
   })
   findMany() {
     return this.usersService.findMany();
@@ -38,7 +45,10 @@ export class UsersController {
   @Get(':id')
   @SelfOrAdmin('id')
   @UseGuards(SelfOrAdminGuard)
-  @ApiOperation({ summary: 'Get user by id' })
+  @ApiOperation({
+    summary: 'Get user by id',
+    description: 'Available to the profile owner or an ADMIN.',
+  })
   @ApiParam({
     name: 'id',
     description: 'User ID',
@@ -52,6 +62,9 @@ export class UsersController {
     status: 404,
     description: 'User not found',
   })
+  @ApiForbiddenResponse({
+    description: 'Only the profile owner or an ADMIN can access this user.',
+  })
   findById(@Param('id') id: string) {
     return this.usersService.findById(id);
   }
@@ -59,7 +72,10 @@ export class UsersController {
   @Patch(':id')
   @SelfOrAdmin('id')
   @UseGuards(SelfOrAdminGuard)
-  @ApiOperation({ summary: 'Update user' })
+  @ApiOperation({
+    summary: 'Update user',
+    description: 'Available to the profile owner or an ADMIN.',
+  })
   @ApiParam({
     name: 'id',
     description: 'User ID',
@@ -73,6 +89,9 @@ export class UsersController {
   @ApiResponse({
     status: 404,
     description: 'User not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'Only the profile owner or an ADMIN can update this user.',
   })
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);

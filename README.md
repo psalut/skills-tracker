@@ -4,6 +4,37 @@ Aplicacion fullstack para registrar skills, organizarlas en una jerarquia y segu
 
 El repositorio esta montado como monorepo con Nx y separa frontend, API y pruebas e2e.
 
+## Autorizacion
+
+La API maneja dos roles:
+
+- `USER`
+- `ADMIN`
+
+Reglas actuales:
+
+- `POST /auth/register` siempre crea usuarios con rol `USER`
+- un `USER` solo puede leer y editar su propio perfil
+- un `USER` puede leer el catalogo de skills si esta autenticado
+- un `USER` solo puede gestionar sus propias relaciones `user-skills`
+- un `ADMIN` puede listar usuarios y leer perfiles de otros usuarios
+- un `ADMIN` puede administrar el catalogo de `skills`
+- un `ADMIN` puede consultar las `user-skills` de otro usuario
+- un `ADMIN` no puede editar ni borrar `user-skills` ajenas; el progreso sigue siendo propiedad del usuario
+
+Resumen por modulo:
+
+- `Users`
+- `GET /users`: solo `ADMIN`
+- `GET /users/:id`: dueño del perfil o `ADMIN`
+- `PATCH /users/:id`: dueño del perfil o `ADMIN`
+- `Skills`
+- `GET /skills`, `GET /skills/roots`, `GET /skills/:id`: cualquier usuario autenticado
+- `POST /skills`, `PATCH /skills/:id`, `DELETE /skills/:id`, `PATCH /skills/:id/restore`: solo `ADMIN`
+- `User Skills`
+- `POST /user-skills`, `GET /user-skills`, `GET /user-skills/:id`, `PATCH /user-skills/:id`, `DELETE /user-skills/:id`: solo sobre recursos propios
+- `GET /users/:userId/skills`: propio usuario o `ADMIN`
+
 ## Estado Actual
 
 Hoy el proyecto ya incluye:
@@ -158,6 +189,12 @@ Las rutas principales estan protegidas por autenticacion.
 - `GET /users/:id`
 - `PATCH /users/:id`
 
+Permisos:
+
+- `GET /users`: solo `ADMIN`
+- `GET /users/:id`: el propio usuario o `ADMIN`
+- `PATCH /users/:id`: el propio usuario o `ADMIN`
+
 ### Skills
 
 - `POST /skills`
@@ -168,6 +205,11 @@ Las rutas principales estan protegidas por autenticacion.
 - `DELETE /skills/:id`
 - `PATCH /skills/:id/restore`
 
+Permisos:
+
+- lectura de skills: cualquier usuario autenticado
+- escritura de skills: solo `ADMIN`
+
 ### User Skills
 
 - `POST /user-skills`
@@ -176,6 +218,12 @@ Las rutas principales estan protegidas por autenticacion.
 - `PATCH /user-skills/:id`
 - `DELETE /user-skills/:id`
 - `GET /users/:userId/skills`
+
+Permisos:
+
+- un `USER` solo puede gestionar sus propias `user-skills`
+- un `ADMIN` puede consultar `GET /users/:userId/skills`
+- un `ADMIN` no puede editar ni borrar `user-skills` ajenas
 
 ## Testing
 
@@ -226,7 +274,6 @@ Pendientes razonables del proyecto:
 - ampliar cobertura frontend
 - endurecer manejo de errores y feedback de UX
 - completar la pantalla de perfil
-- agregar autorizacion por roles si el dominio lo necesita
 - sumar CI automatizada para lint, tests y build
 - dockerizar el entorno
 
