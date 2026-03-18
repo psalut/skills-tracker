@@ -34,7 +34,10 @@ test.describe('auth flows', () => {
 
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Your current learning status' }),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Your current learning status',
+      }),
     ).toBeVisible();
     await expect(page.getByText('Pablo')).toBeVisible();
   });
@@ -64,7 +67,10 @@ test.describe('auth flows', () => {
 
     await expect(page).toHaveURL(/\/dashboard$/);
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Your current learning status' }),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Your current learning status',
+      }),
     ).toBeVisible();
   });
 });

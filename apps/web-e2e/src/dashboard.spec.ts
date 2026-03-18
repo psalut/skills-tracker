@@ -27,12 +27,19 @@ test.describe('dashboard', () => {
     await page.goto('/dashboard');
 
     await expect(
-      page.getByRole('heading', { level: 1, name: 'Your current learning status' }),
+      page.getByRole('heading', {
+        level: 1,
+        name: 'Your current learning status',
+      }),
     ).toBeVisible();
     await expect(page.getByText('Tracked skills')).toBeVisible();
     await expect(page.getByText('3').first()).toBeVisible();
-    await expect(page.getByRole('heading', { level: 2, name: 'Needs attention' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 2, name: 'Closest to mastery' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Needs attention' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'Closest to mastery' }),
+    ).toBeVisible();
     await expect(
       page.getByRole('heading', { level: 3, name: 'Angular' }).first(),
     ).toBeVisible();
@@ -60,7 +67,9 @@ test.describe('dashboard', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify([createUserSkill(createSkill('NestJS'), 'ADVANCED')]),
+        body: JSON.stringify([
+          createUserSkill(createSkill('NestJS'), 'ADVANCED'),
+        ]),
       });
     });
 

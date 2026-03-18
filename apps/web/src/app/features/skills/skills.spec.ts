@@ -4,10 +4,7 @@ import { Skill, UserSkill } from './skill.model';
 import { SkillsService } from './skills.service';
 import { UserSkillsService } from '../user-skills/user-skills.service';
 
-function createSkill(
-  name: string,
-  overrides: Partial<Skill> = {},
-): Skill {
+function createSkill(name: string, overrides: Partial<Skill> = {}): Skill {
   const slug = name.toLowerCase().replace(/\s+/g, '-');
 
   return {
@@ -40,7 +37,9 @@ function createTrackedSkill(skill: Skill): UserSkill {
 describe('Skills', () => {
   async function setup({
     getSkills = vi.fn(async () => [] as Skill[]),
-    createSkillRequest = vi.fn(async (_payload) => createSkill('Created skill')),
+    createSkillRequest = vi.fn(async (_payload) =>
+      createSkill('Created skill'),
+    ),
     updateSkill = vi.fn(async (id: string, payload: Partial<Skill>) =>
       createSkill('Updated skill', {
         id,
