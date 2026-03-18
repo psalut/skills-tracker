@@ -23,7 +23,7 @@ test.describe('skills catalog', () => {
     await mockSkills(page, [angular, docker, english]);
     await mockUserSkills(page, [createUserSkill(angular, 'INTERMEDIATE')]);
 
-    await page.route('http://localhost:3000/user-skills', async (route) => {
+    await page.route('**/user-skills', async (route) => {
       if (route.request().method() === 'POST') {
         const payload = route.request().postDataJSON() as { skillId: string };
 

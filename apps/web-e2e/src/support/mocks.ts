@@ -46,8 +46,6 @@ export type UserSkill = {
   skill: Skill;
 };
 
-const API_BASE_URL = 'http://localhost:3000';
-
 export const defaultUser: AuthUser = {
   id: 'user-1',
   email: 'pablo@mail.com',
@@ -100,6 +98,11 @@ export async function mockJson(
   status = 200,
 ): Promise<void> {
   await page.route(toRoutePattern(path), async (route) => {
+    if (!shouldHandleApiRequest(route, path)) {
+      await route.fallback();
+      return;
+    }
+
     await fulfillJson(route, body, status);
   });
 }
@@ -156,7 +159,7 @@ export async function mockLogin(
   const status = options.status ?? 201;
   const body = options.body ?? { accessToken: token };
 
-  await page.route(`${API_BASE_URL}/auth/login`, async (route) => {
+  await page.route('**/auth/login', async (route) => {
     await fulfillJson(route, body, status);
   });
 }
@@ -175,15 +178,24 @@ async function fulfillJson(
 
 function toRoutePattern(path: string | RegExp): string | RegExp {
   if (path instanceof RegExp) {
-    return new RegExp(
-      path.source.replace(/^/, escapeForRegExp(API_BASE_URL)),
-      path.flags,
-    );
+    return path;
   }
 
-  return `${API_BASE_URL}${path}`;
+  return `**${path}`;
 }
 
-function escapeForRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function shouldHandleApiRequest(route: Route, path: string | RegExp): boolean {
+  const resourceType = route.request().resourceType();
+
+  if (resourceType !== 'fetch' && resourceType !== 'xhr') {
+    return false;
+  }
+
+  const pathname = new URL(route.request().url()).pathname;
+
+  if (path instanceof RegExp) {
+    return path.test(pathname);
+  }
+
+  return pathname === path;
 }

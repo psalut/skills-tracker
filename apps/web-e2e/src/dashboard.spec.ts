@@ -12,7 +12,7 @@ test.describe('dashboard', () => {
     const testing = createSkill('Testing', { category: 'TESTING' });
 
     await mockAuthenticatedSession(page);
-    await page.route('http://localhost:3000/user-skills', async (route) => {
+    await page.route('**/user-skills', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -52,7 +52,7 @@ test.describe('dashboard', () => {
     await mockAuthenticatedSession(page);
 
     let requestCount = 0;
-    await page.route('http://localhost:3000/user-skills', async (route) => {
+    await page.route('**/user-skills', async (route) => {
       requestCount += 1;
 
       if (requestCount === 1) {
