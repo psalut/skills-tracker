@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { getE2EBaseUrl, loadWorkspaceEnv } from '../../../../tools/env/workspace-env';
+import {
+  getE2EBaseUrl,
+  loadWorkspaceEnv,
+} from '../../../../tools/env/workspace-env';
 
 loadWorkspaceEnv({ environment: 'test' });
 

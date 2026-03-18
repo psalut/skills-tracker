@@ -9,4 +9,3 @@ declare global {
 export function getRuntimeApiBaseUrl(): string {
   return window.__SKILLS_TRACKER_CONFIG__?.apiBaseUrl?.trim() || '/api';
 }
-

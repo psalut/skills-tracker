@@ -137,13 +137,10 @@ export function getWebOrigins(): string[] {
 
 export function getE2EBaseUrl(): string {
   return (
-    getEnv('E2E_BASE_URL') ??
-    `http://${getE2EApiHost()}:${getE2EApiPort()}`
+    getEnv('E2E_BASE_URL') ?? `http://${getE2EApiHost()}:${getE2EApiPort()}`
   );
 }
 
 export function getApiProxyTarget(): string {
-  return (
-    getEnv('API_PROXY_TARGET') ?? `http://${getApiHost()}:${getApiPort()}`
-  );
+  return getEnv('API_PROXY_TARGET') ?? `http://${getApiHost()}:${getApiPort()}`;
 }

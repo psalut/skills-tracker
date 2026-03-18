@@ -12,8 +12,7 @@ try {
 }
 
 const webPort = getNumberEnv('WEB_PORT', 4200);
-const baseURL =
-  process.env['BASE_URL'] || `http://127.0.0.1:${webPort}`;
+const baseURL = process.env['BASE_URL'] || `http://127.0.0.1:${webPort}`;
 
 /**
  * Read environment variables from file.
