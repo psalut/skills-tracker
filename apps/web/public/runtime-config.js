@@ -1,0 +1,1 @@
+window.__SKILLS_TRACKER_CONFIG__ = window.__SKILLS_TRACKER_CONFIG__ ?? {};

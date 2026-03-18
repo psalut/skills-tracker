@@ -197,5 +197,5 @@ function shouldHandleApiRequest(route: Route, path: string | RegExp): boolean {
     return path.test(pathname);
   }
 
-  return pathname === path;
+  return pathname === path || pathname.endsWith(path);
 }

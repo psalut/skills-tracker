@@ -4,6 +4,10 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky",
+    "dev:api": "cross-env NODE_ENV=development pnpm exec nx serve api",
+    "dev:web": "cross-env NODE_ENV=development pnpm exec nx serve web",
+    "test:api:e2e": "cross-env NODE_ENV=test pnpm exec nx e2e api-e2e",
+    "test:web:e2e": "pnpm exec playwright test apps/web-e2e/src --config apps/web-e2e/playwright.config.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint-staged": "lint-staged",

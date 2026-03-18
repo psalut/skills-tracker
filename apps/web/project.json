@@ -55,6 +55,11 @@
     "serve": {
       "continuous": true,
       "executor": "@angular/build:dev-server",
+      "options": {
+        "host": "127.0.0.1",
+        "port": 4200,
+        "proxyConfig": "apps/web/proxy.conf.mjs"
+      },
       "configurations": {
         "production": {
           "buildTarget": "web:build:production"
@@ -77,6 +82,7 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "web:build",
+        "host": "127.0.0.1",
         "port": 4200,
         "staticFilePath": "dist/apps/web/browser",
         "spa": true

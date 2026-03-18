@@ -1,11 +1,7 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-import path from 'node:path';
+import { getE2EBaseUrl, loadWorkspaceEnv } from '../../../../tools/env/workspace-env';
 
-const REPO_ROOT = path.resolve(__dirname, '../../../..');
-const ENV_PATH = path.join(REPO_ROOT, '.env.test');
+loadWorkspaceEnv({ environment: 'test' });
 
-dotenv.config({ path: ENV_PATH });
-
-axios.defaults.baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3333';
+axios.defaults.baseURL = getE2EBaseUrl();
 axios.defaults.validateStatus = () => true;

@@ -3,19 +3,18 @@ import { writeFileSync, existsSync, readFileSync, unlinkSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { waitForPortOpen } from '@nx/node/utils';
-import dotenv from 'dotenv';
 import { resetDatabase } from './reset-database';
+import {
+  getE2EApiHost,
+  getE2EApiPort,
+  loadWorkspaceEnv,
+} from '../../../../tools/env/workspace-env';
 
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
-const ENV_PATH = path.join(REPO_ROOT, '.env.test');
 const PID_FILE = path.join(REPO_ROOT, 'tmp-api-e2e.pid');
 
 function loadTestEnv(): void {
-  if (!existsSync(ENV_PATH)) {
-    throw new Error(`Missing .env.test at: ${ENV_PATH}`);
-  }
-
-  dotenv.config({ path: ENV_PATH, override: true });
+  loadWorkspaceEnv({ environment: 'test', override: true });
 
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is missing after loading .env.test');
@@ -220,8 +219,8 @@ module.exports = async function () {
   assertTestDatabaseUrl();
   killPreviousE2EProcess();
 
-  const host = process.env.HOST ?? '127.0.0.1';
-  const port = process.env.PORT ? Number(process.env.PORT) : 3333;
+  const host = getE2EApiHost();
+  const port = getE2EApiPort();
 
   await runMigrationsWithRetry();
   await resetDatabase();
