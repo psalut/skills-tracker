@@ -54,6 +54,9 @@ jobs:
           E2E_BASE_URL=http://127.0.0.1:3333
           EOF
 
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate --schema apps/api/prisma/schema.prisma
+
       - name: Format check
         run: pnpm run format:check
 
