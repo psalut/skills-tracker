@@ -8,23 +8,76 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
+      DATABASE_DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
+      NEON_TEST_HOST_HINT: 127.0.0.1:5432
+      JWT_SECRET: ci-test-secret
+      JWT_EXPIRES_IN: 1h
+      HOST: 127.0.0.1
+      PORT: 3333
+      E2E_BASE_URL: http://127.0.0.1:3333
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: skills_tracker_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d skills_tracker_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare test env
+        run: |
+          cat <<EOF > .env.test
+          DATABASE_URL=${DATABASE_URL}
+          DATABASE_DIRECT_URL=${DATABASE_DIRECT_URL}
+          NEON_TEST_HOST_HINT=${NEON_TEST_HOST_HINT}
+          JWT_SECRET=${JWT_SECRET}
+          JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+          HOST=${HOST}
+          PORT=${PORT}
+          E2E_BASE_URL=${E2E_BASE_URL}
+          EOF
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate --schema apps/api/prisma/schema.prisma
+
       - name: Format check
         run: pnpm run format:check
+
+      - name: Lint api and web
+        run: pnpm exec nx run-many -t lint --projects=api,web --parallel=2
+
+      - name: Test api and web
+        run: pnpm exec nx run-many -t test --projects=api,web --parallel=2
+
+      - name: Build api and web
+        run: pnpm exec nx run-many -t build --projects=api,web --parallel=2
+
+      - name: API e2e
+        run: pnpm exec nx e2e api-e2e
