@@ -1,11 +1,10 @@
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { writeFileSync, existsSync, readFileSync, unlinkSync } from 'node:fs';
+import net from 'node:net';
 import path from 'node:path';
 import { waitForPortOpen } from '@nx/node/utils';
 import dotenv from 'dotenv';
 import { resetDatabase } from './reset-database';
-
-/* eslint-disable */
 
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
 const ENV_PATH = path.join(REPO_ROOT, '.env.test');
@@ -50,6 +49,32 @@ function assertTestDatabaseUrl(): void {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+function isPortOpen(host: string, port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+
+    const finalize = (result: boolean) => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(result);
+    };
+
+    socket.setTimeout(500);
+    socket.once('connect', () => finalize(true));
+    socket.once('timeout', () => finalize(false));
+    socket.once('error', () => finalize(false));
+    socket.connect(port, host);
+  });
+}
+
+async function assertPortAvailable(host: string, port: number): Promise<void> {
+  if (await isPortOpen(host, port)) {
+    throw new Error(
+      `Refusing to run api-e2e: ${host}:${port} is already in use before startup.`,
+    );
+  }
 }
 
 function killPreviousE2EProcess(): void {
@@ -155,6 +180,41 @@ async function runMigrationsWithRetry(): Promise<void> {
   }
 }
 
+async function waitForApiStartup(
+  child: ChildProcess,
+  host: string,
+  port: number,
+): Promise<void> {
+  const childFailed = new Promise<never>((_, reject) => {
+    child.once('error', (error) => {
+      reject(
+        new Error(
+          `API process failed before startup completed: ${error.message}`,
+        ),
+      );
+    });
+
+    child.once('exit', (code, signal) => {
+      reject(
+        new Error(
+          `API process exited before startup completed (code: ${code ?? 'null'}, signal: ${signal ?? 'none'}).`,
+        ),
+      );
+    });
+  });
+
+  await Promise.race([
+    waitForPortOpen(port, { host, retries: 120, retryDelay: 250 }),
+    childFailed,
+  ]);
+
+  if (child.exitCode !== null) {
+    throw new Error(
+      `API process is not running after startup completed (exit code: ${child.exitCode}).`,
+    );
+  }
+}
+
 module.exports = async function () {
   loadTestEnv();
   assertTestDatabaseUrl();
@@ -165,6 +225,8 @@ module.exports = async function () {
 
   await runMigrationsWithRetry();
   await resetDatabase();
+
+  await assertPortAvailable(host, port);
 
   const isWin = process.platform === 'win32';
 
@@ -199,7 +261,7 @@ module.exports = async function () {
 
   writeFileSync(PID_FILE, String(child.pid), { encoding: 'utf-8' });
 
-  await waitForPortOpen(port, { host, retries: 120, retryDelay: 250 });
+  await waitForApiStartup(child, host, port);
 
   globalThis.__TEARDOWN_MESSAGE__ = '\nTearing down...\n';
 };
