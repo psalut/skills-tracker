@@ -8,6 +8,16 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
+      DATABASE_DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
+      NEON_TEST_HOST_HINT: 127.0.0.1:5432
+      JWT_SECRET: ci-test-secret
+      JWT_EXPIRES_IN: 1h
+      HOST: 127.0.0.1
+      PORT: 3333
+      E2E_BASE_URL: http://127.0.0.1:3333
     services:
       postgres:
         image: postgres:16
@@ -44,14 +54,14 @@ jobs:
       - name: Prepare test env
         run: |
           cat <<'EOF' > .env.test
-          DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
-          DATABASE_DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
-          NEON_TEST_HOST_HINT=127.0.0.1:5432
-          JWT_SECRET=ci-test-secret
-          JWT_EXPIRES_IN=1h
-          HOST=127.0.0.1
-          PORT=3333
-          E2E_BASE_URL=http://127.0.0.1:3333
+          DATABASE_URL=${DATABASE_URL}
+          DATABASE_DIRECT_URL=${DATABASE_DIRECT_URL}
+          NEON_TEST_HOST_HINT=${NEON_TEST_HOST_HINT}
+          JWT_SECRET=${JWT_SECRET}
+          JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+          HOST=${HOST}
+          PORT=${PORT}
+          E2E_BASE_URL=${E2E_BASE_URL}
           EOF
 
       - name: Generate Prisma client
