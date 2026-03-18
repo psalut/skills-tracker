@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from './auth.types';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -10,13 +11,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
-type AuthenticatedRequest = Request & {
-  user: {
-    sub: string;
-    email: string;
-  };
-};
 
 @ApiTags('auth')
 @Controller('auth')

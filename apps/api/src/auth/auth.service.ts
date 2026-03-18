@@ -6,11 +6,7 @@ import { UsersService } from '../users/users.service';
 import type { UserPublic } from '../users/users.types';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-
-export type JwtPayload = {
-  sub: string;
-  email: string;
-};
+import type { JwtPayload } from './auth.types';
 
 export type AuthLoginResponse = {
   accessToken: string;
@@ -51,6 +47,7 @@ export class AuthService {
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
+      role: user.role,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);

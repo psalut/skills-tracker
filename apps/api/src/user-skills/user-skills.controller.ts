@@ -10,29 +10,25 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import {
   ApiBearerAuth,
   ApiBadRequestResponse,
   ApiBody,
   ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../auth/auth.types';
 import { UserSkillsService } from './user-skills.service';
 import { CreateUserSkillDto } from './dto/create-user-skill.dto';
 import { UpdateUserSkillDto } from './dto/update-user-skill.dto';
-
-type AuthenticatedRequest = Request & {
-  user: {
-    sub: string;
-    email: string;
-  };
-};
 
 @ApiTags('User Skills')
 @ApiBearerAuth('JWT-auth')
@@ -45,7 +41,7 @@ export class UserSkillsController {
   @ApiOperation({
     summary: 'Create a user-skill relation',
     description:
-      'Creates a relation between a user and a skill, optionally storing current level and notes.',
+      'Creates a relation between the authenticated user and a skill, optionally storing current level and notes.',
   })
   @ApiBody({ type: CreateUserSkillDto })
   @ApiCreatedResponse({
@@ -71,7 +67,7 @@ export class UserSkillsController {
   @ApiOperation({
     summary: 'Get all user-skill relations',
     description:
-      'Returns all user-skill relations with related user and skill data.',
+      'Returns all user-skill relations for the authenticated user, with related user and skill data.',
   })
   @ApiOkResponse({
     description: 'User-skill relations retrieved successfully.',
@@ -83,6 +79,8 @@ export class UserSkillsController {
   @Get('user-skills/:id')
   @ApiOperation({
     summary: 'Get a user-skill relation by id',
+    description:
+      'Returns a user-skill relation only if it belongs to the authenticated user.',
   })
   @ApiParam({
     name: 'id',
@@ -102,7 +100,8 @@ export class UserSkillsController {
   @Get('users/:userId/skills')
   @ApiOperation({
     summary: 'Get all skills for a user',
-    description: 'Returns all skills associated with a specific user.',
+    description:
+      'Returns all skills associated with a specific user. Allowed for the same user or an ADMIN. ADMIN access is read-only.',
   })
   @ApiParam({
     name: 'userId',
@@ -115,11 +114,15 @@ export class UserSkillsController {
   @ApiNotFoundResponse({
     description: 'User not found.',
   })
+  @ApiForbiddenResponse({
+    description:
+      'Only the same user or an ADMIN can access this list of user skills.',
+  })
   findByUser(
     @Req() req: AuthenticatedRequest,
     @Param('userId') userId: string,
   ) {
-    if (userId !== req.user.sub) {
+    if (req.user.role !== UserRole.ADMIN && userId !== req.user.sub) {
       throw new ForbiddenException('You can only access your own skills');
     }
 
@@ -130,7 +133,7 @@ export class UserSkillsController {
   @ApiOperation({
     summary: 'Update a user-skill relation',
     description:
-      'Updates current level and/or notes for an existing user-skill relation.',
+      'Updates current level and/or notes for an existing user-skill relation owned by the authenticated user.',
   })
   @ApiParam({
     name: 'id',
@@ -158,6 +161,8 @@ export class UserSkillsController {
   @Delete('user-skills/:id')
   @ApiOperation({
     summary: 'Delete a user-skill relation',
+    description:
+      'Deletes a user-skill relation owned by the authenticated user.',
   })
   @ApiParam({
     name: 'id',

@@ -1,14 +1,20 @@
 import { Body, Controller, Get, Patch, Param, UseGuards } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { SelfOrAdmin } from '../auth/decorators/self-or-admin.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { SelfOrAdminGuard } from '../auth/guards/self-or-admin.guard';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiForbiddenResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
-  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('users')
@@ -19,17 +25,30 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  @ApiOperation({
+    summary: 'Get all users',
+    description: 'Restricted to ADMIN users.',
+  })
   @ApiResponse({
     status: 200,
     description: 'List of users',
+  })
+  @ApiForbiddenResponse({
+    description: 'Only ADMIN users can list all users.',
   })
   findMany() {
     return this.usersService.findMany();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by id' })
+  @SelfOrAdmin('id')
+  @UseGuards(SelfOrAdminGuard)
+  @ApiOperation({
+    summary: 'Get user by id',
+    description: 'Available to the profile owner or an ADMIN.',
+  })
   @ApiParam({
     name: 'id',
     description: 'User ID',
@@ -43,12 +62,20 @@ export class UsersController {
     status: 404,
     description: 'User not found',
   })
+  @ApiForbiddenResponse({
+    description: 'Only the profile owner or an ADMIN can access this user.',
+  })
   findById(@Param('id') id: string) {
     return this.usersService.findById(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update user' })
+  @SelfOrAdmin('id')
+  @UseGuards(SelfOrAdminGuard)
+  @ApiOperation({
+    summary: 'Update user',
+    description: 'Available to the profile owner or an ADMIN.',
+  })
   @ApiParam({
     name: 'id',
     description: 'User ID',
@@ -62,6 +89,9 @@ export class UsersController {
   @ApiResponse({
     status: 404,
     description: 'User not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'Only the profile owner or an ADMIN can update this user.',
   })
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);

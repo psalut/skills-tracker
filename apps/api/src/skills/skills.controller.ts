@@ -6,31 +6,42 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import {
+  ApiBearerAuth,
   ApiBadRequestResponse,
   ApiBody,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { SkillsService } from './skills.service';
 
 @ApiTags('Skills')
+@ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard)
 @Controller('skills')
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Create a new skill',
     description:
-      'Creates a new skill. Optionally it can be created as a sub-skill of another skill.',
+      'Creates a new skill. Optionally it can be created as a sub-skill of another skill. Restricted to ADMIN users.',
   })
   @ApiBody({ type: CreateSkillDto })
   @ApiCreatedResponse({
@@ -38,6 +49,9 @@ export class SkillsController {
   })
   @ApiBadRequestResponse({
     description: 'Invalid data or duplicated skill at the same level',
+  })
+  @ApiForbiddenResponse({
+    description: 'Only ADMIN users can create skills.',
   })
   @ApiNotFoundResponse({
     description: 'Parent skill not found',
@@ -49,7 +63,8 @@ export class SkillsController {
   @Get()
   @ApiOperation({
     summary: 'Get all skills',
-    description: 'Returns all active skills (excluding soft deleted ones).',
+    description:
+      'Returns all active skills (excluding soft deleted ones). Available to any authenticated user.',
   })
   @ApiOkResponse({
     description: 'List of skills',
@@ -62,7 +77,7 @@ export class SkillsController {
   @ApiOperation({
     summary: 'Get root skills',
     description:
-      'Returns all skills that do not have a parent (top-level skills).',
+      'Returns all skills that do not have a parent (top-level skills). Available to any authenticated user.',
   })
   @ApiOkResponse({
     description: 'List of root skills',
@@ -74,6 +89,7 @@ export class SkillsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get a skill by id',
+    description: 'Available to any authenticated user.',
   })
   @ApiParam({
     name: 'id',
@@ -91,8 +107,11 @@ export class SkillsController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Update a skill',
+    description: 'Restricted to ADMIN users.',
   })
   @ApiParam({
     name: 'id',
@@ -107,6 +126,9 @@ export class SkillsController {
     description:
       'Invalid update (circular parent relationship or duplicated name)',
   })
+  @ApiForbiddenResponse({
+    description: 'Only ADMIN users can update skills.',
+  })
   @ApiNotFoundResponse({
     description: 'Skill or parent skill not found',
   })
@@ -115,10 +137,12 @@ export class SkillsController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Delete a skill',
     description:
-      'Soft deletes a skill. A skill cannot be deleted if it has sub-skills.',
+      'Soft deletes a skill. A skill cannot be deleted if it has sub-skills. Restricted to ADMIN users.',
   })
   @ApiParam({
     name: 'id',
@@ -131,6 +155,9 @@ export class SkillsController {
   @ApiBadRequestResponse({
     description: 'Cannot delete a skill that has sub-skills',
   })
+  @ApiForbiddenResponse({
+    description: 'Only ADMIN users can delete skills.',
+  })
   @ApiNotFoundResponse({
     description: 'Skill not found',
   })
@@ -139,10 +166,12 @@ export class SkillsController {
   }
 
   @Patch(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
   @ApiOperation({
     summary: 'Restore a soft-deleted skill',
     description:
-      'Restores a previously soft-deleted skill. If the skill has a parent, the parent must exist and not be deleted.',
+      'Restores a previously soft-deleted skill. If the skill has a parent, the parent must exist and not be deleted. Restricted to ADMIN users.',
   })
   @ApiParam({
     name: 'id',
@@ -155,6 +184,9 @@ export class SkillsController {
   @ApiBadRequestResponse({
     description:
       'Cannot restore a skill whose parent does not exist or is deleted',
+  })
+  @ApiForbiddenResponse({
+    description: 'Only ADMIN users can restore skills.',
   })
   @ApiNotFoundResponse({
     description: 'Skill not found',

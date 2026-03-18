@@ -1,45 +1,13 @@
 import axios from 'axios';
+import {
+  createAndLoginAdmin,
+  registerAndLoginUser,
+} from '../support/auth-helpers';
 import { resetDatabase } from '../support/reset-database';
 
 describe('Users API (e2e)', () => {
-  let userId: string;
-  let accessToken: string;
-  let email: string;
-
-  const password = '12345678';
-
-  function authHeaders() {
-    return {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-  }
-
   beforeAll(async () => {
     await resetDatabase();
-  });
-
-  beforeEach(async () => {
-    email = `user-${Date.now()}-${Math.random()}@mail.com`;
-
-    const registerRes = await axios.post('/auth/register', {
-      email,
-      password,
-      firstName: 'Users',
-      lastName: 'E2E',
-    });
-
-    expect(registerRes.status).toBe(201);
-    userId = registerRes.data.id;
-
-    const loginRes = await axios.post('/auth/login', {
-      email,
-      password,
-    });
-
-    expect(loginRes.status).toBe(201);
-    accessToken = loginRes.data.accessToken;
   });
 
   it('GET /users should reject missing token', async () => {
@@ -48,35 +16,102 @@ describe('Users API (e2e)', () => {
     expect(res.status).toBe(401);
   });
 
-  it('GET /users should return list', async () => {
-    const res = await axios.get('/users', authHeaders());
+  it('GET /users should return 403 for a non-admin user', async () => {
+    const { authHeaders } = await registerAndLoginUser();
+
+    const res = await axios.get('/users', {
+      headers: authHeaders,
+    });
+
+    expect(res.status).toBe(403);
+    expect(res.data.message).toBe('Insufficient permissions');
+  });
+
+  it('GET /users should return list for an admin', async () => {
+    const { authHeaders } = await createAndLoginAdmin();
+
+    const res = await axios.get('/users', {
+      headers: authHeaders,
+    });
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.data)).toBe(true);
   });
 
-  it('GET /users/:id should return created user', async () => {
-    const res = await axios.get(`/users/${userId}`, authHeaders());
+  it('GET /users/:id should return the current user profile', async () => {
+    const { user, authHeaders } = await registerAndLoginUser();
+
+    const res = await axios.get(`/users/${user.id}`, {
+      headers: authHeaders,
+    });
 
     expect(res.status).toBe(200);
-    expect(res.data.id).toBe(userId);
-    expect(res.data.email).toBe(email);
+    expect(res.data.id).toBe(user.id);
+    expect(res.data.email).toBe(user.email);
   });
 
-  it('PATCH /users/:id should update user with valid token', async () => {
+  it('PATCH /users/:id should update the current user profile', async () => {
+    const { user, authHeaders } = await registerAndLoginUser();
+
     const res = await axios.patch(
-      `/users/${userId}`,
+      `/users/${user.id}`,
       { firstName: 'Updated' },
-      authHeaders(),
+      {
+        headers: authHeaders,
+      },
     );
 
     expect(res.status).toBe(200);
-    expect(res.data.id).toBe(userId);
+    expect(res.data.id).toBe(user.id);
     expect(res.data.firstName).toBe('Updated');
   });
 
-  it('GET /users/:id should return 404 for missing user', async () => {
-    const res = await axios.get('/users/non-existing-id', authHeaders());
+  it('GET /users/:id should return 403 for another non-admin user', async () => {
+    const { authHeaders } = await registerAndLoginUser();
+    const { user: otherUser } = await registerAndLoginUser();
+
+    const res = await axios.get(`/users/${otherUser.id}`, {
+      headers: authHeaders,
+    });
+
+    expect(res.status).toBe(403);
+    expect(res.data.message).toBe('You can only access your own profile');
+  });
+
+  it('PATCH /users/:id should return 403 for another non-admin user', async () => {
+    const { authHeaders } = await registerAndLoginUser();
+    const { user: otherUser } = await registerAndLoginUser();
+
+    const res = await axios.patch(
+      `/users/${otherUser.id}`,
+      { firstName: 'Blocked' },
+      {
+        headers: authHeaders,
+      },
+    );
+
+    expect(res.status).toBe(403);
+    expect(res.data.message).toBe('You can only access your own profile');
+  });
+
+  it('GET /users/:id should allow admins to read another user profile', async () => {
+    const { authHeaders } = await createAndLoginAdmin();
+    const { user } = await registerAndLoginUser();
+
+    const res = await axios.get(`/users/${user.id}`, {
+      headers: authHeaders,
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.data.id).toBe(user.id);
+  });
+
+  it('GET /users/:id should return 404 for a missing user when authorized', async () => {
+    const { authHeaders } = await createAndLoginAdmin();
+
+    const res = await axios.get('/users/non-existing-id', {
+      headers: authHeaders,
+    });
 
     expect(res.status).toBe(404);
   });

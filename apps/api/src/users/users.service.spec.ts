@@ -1,7 +1,6 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import type { User } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole, type User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from './users.service';
 
@@ -58,6 +57,7 @@ describe('UsersService', () => {
         firstName: 'Pablo',
         lastName: 'Salut',
         password: 'hashed_123',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-02T20:00:00.000Z'),
         updatedAt: new Date('2026-03-02T20:00:00.000Z'),
       };
@@ -80,6 +80,7 @@ describe('UsersService', () => {
           firstName: 'Pablo',
           lastName: 'Salut',
           password: 'hashed_123',
+          role: UserRole.USER,
         },
       });
 
@@ -89,6 +90,7 @@ describe('UsersService', () => {
         email: created.email,
         firstName: created.firstName,
         lastName: created.lastName,
+        role: created.role,
         createdAt: created.createdAt,
         updatedAt: created.updatedAt,
       });
@@ -171,6 +173,7 @@ describe('UsersService', () => {
         firstName: 'A',
         lastName: 'B',
         password: 'hashed',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-02T20:00:00.000Z'),
         updatedAt: new Date('2026-03-02T20:00:00.000Z'),
       };
@@ -203,6 +206,7 @@ describe('UsersService', () => {
         firstName: 'A',
         lastName: 'B',
         password: 'hashed',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-02T20:00:00.000Z'),
         updatedAt: new Date('2026-03-02T20:00:00.000Z'),
       };
@@ -237,6 +241,7 @@ describe('UsersService', () => {
         firstName: 'A',
         lastName: 'B',
         password: 'hashed1',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-03T20:00:00.000Z'),
         updatedAt: new Date('2026-03-03T20:00:00.000Z'),
       };
@@ -247,6 +252,7 @@ describe('UsersService', () => {
         firstName: 'C',
         lastName: 'D',
         password: 'hashed2',
+        role: UserRole.ADMIN,
         createdAt: new Date('2026-03-02T20:00:00.000Z'),
         updatedAt: new Date('2026-03-02T20:00:00.000Z'),
       };
@@ -279,6 +285,7 @@ describe('UsersService', () => {
         firstName: 'New',
         lastName: 'Name',
         password: 'hashed',
+        role: UserRole.USER,
         createdAt: new Date('2026-03-02T20:00:00.000Z'),
         updatedAt: new Date('2026-03-04T20:00:00.000Z'),
       };

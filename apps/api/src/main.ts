@@ -39,7 +39,19 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Skills Tracker API')
-    .setDescription('API para autenticacion, usuarios y seguimiento de skills')
+    .setDescription(
+      [
+        'API para autenticacion, usuarios y seguimiento de skills.',
+        '',
+        'Politica de autorizacion:',
+        '- `POST /auth/register` crea usuarios con rol `USER`.',
+        '- `ADMIN` puede listar usuarios y administrar el catalogo de skills.',
+        '- Cada usuario puede leer y editar solo su propio perfil, salvo `ADMIN`.',
+        '- Cada usuario solo puede gestionar sus propias `user-skills`.',
+        '- `ADMIN` puede consultar las skills asignadas de otro usuario con `GET /users/:userId/skills`.',
+        '- `ADMIN` no puede editar ni borrar `user-skills` ajenas.',
+      ].join('\n'),
+    )
     .setVersion('1.0.0')
     .addBearerAuth(
       {

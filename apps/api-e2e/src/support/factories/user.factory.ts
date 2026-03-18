@@ -1,5 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserRole } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import * as bcrypt from 'bcrypt';
 import { Pool } from 'pg';
 
 const pool = new Pool({
@@ -19,15 +20,19 @@ export async function createTestUser(overrides?: {
   firstName?: string;
   lastName?: string;
   password?: string;
+  role?: UserRole;
 }) {
   const suffix = uniqueSuffix();
+  const password = overrides?.password ?? '12345678';
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   return prisma.user.create({
     data: {
       email: overrides?.email ?? `test-user-${suffix}@mail.com`,
       firstName: overrides?.firstName ?? 'Pablo',
       lastName: overrides?.lastName ?? 'Lopez',
-      password: overrides?.password ?? 'hashed-password',
+      password: hashedPassword,
+      role: overrides?.role ?? UserRole.USER,
     },
   });
 }
