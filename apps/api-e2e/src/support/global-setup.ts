@@ -223,10 +223,10 @@ module.exports = async function () {
   const host = process.env.HOST ?? '127.0.0.1';
   const port = process.env.PORT ? Number(process.env.PORT) : 3333;
 
-  await assertPortAvailable(host, port);
-
   await runMigrationsWithRetry();
   await resetDatabase();
+
+  await assertPortAvailable(host, port);
 
   const isWin = process.platform === 'win32';
 
