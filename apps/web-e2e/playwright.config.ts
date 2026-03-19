@@ -25,6 +25,16 @@ const baseURL = process.env['BASE_URL'] || `http://127.0.0.1:${webPort}`;
  */
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './src' }),
+  reporter: process.env.CI
+    ? [
+        ['list'],
+        [
+          'html',
+          { open: 'never', outputFolder: 'dist/playwright/web-e2e-report' },
+        ],
+      ]
+    : 'html',
+  outputDir: 'dist/playwright/web-e2e-results',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,

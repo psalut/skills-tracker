@@ -49,6 +49,7 @@ Hoy el proyecto ya incluye:
 - tests e2e frontend con Playwright sobre login, dashboard, skills y profile
 - configuracion centralizada de entorno para `api`, Prisma, `api-e2e` y `web-e2e`
 - runtime config y proxy de desarrollo para controlar el target de la API en entornos locales
+- CI con validacion automatica de formato, lint, tests unitarios, build, `api-e2e` y `web-e2e` en Chromium
 
 ## Stack
 
@@ -276,6 +277,9 @@ Frontend end-to-end tests:
 ```bash
 pnpm run test:web:e2e
 ```
+
+En CI la suite `web-e2e` se ejecuta en Chromium para mantener el tiempo del pipeline bajo control.
+Cuando un test e2e del frontend falla en CI, GitHub Actions conserva el reporte HTML y los resultados de Playwright como artifacts para facilitar el diagnostico.
 
 En este repo el backend ya tiene cobertura unitaria y e2e. En frontend hay cobertura unitaria sobre los flujos visibles principales y una suite e2e con Playwright para login, dashboard, skills y profile.
 
