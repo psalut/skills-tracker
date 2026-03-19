@@ -48,7 +48,7 @@ Hoy el proyecto ya incluye:
 - tests unitarios frontend sobre login, guards, dashboard, skills, profile y `user-skills`
 - tests e2e frontend con Playwright sobre login, dashboard, skills y profile
 - configuracion centralizada de entorno para `api`, Prisma, `api-e2e` y `web-e2e`
-- runtime config y proxy de desarrollo para desacoplar el frontend del host fijo de la API
+- runtime config y proxy de desarrollo para controlar el target de la API en entornos locales
 
 ## Stack
 
@@ -146,9 +146,10 @@ Notas:
 
 - `DATABASE_URL` es obligatoria para Prisma.
 - `JWT_SECRET` es obligatoria. La API falla al iniciar si no existe.
-- El frontend usa `/api` por defecto y el `serve` de Angular resuelve eso mediante proxy al backend local.
-- Si necesitas otro backend en runtime, puedes sobrescribir `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` en `runtime-config.js`.
-- En produccion, el runtime puede inyectar variables de entorno sin necesidad de un `.env.prod` versionado.
+- En desarrollo, `pnpm run dev:web` usa el proxy de Angular para redirigir `/api` al backend local.
+- El frontend tambien expone `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` mediante `runtime-config.js`.
+- En builds estaticos, el valor por defecto publicado apunta a `http://127.0.0.1:3000`.
+- Si necesitas otro backend para una entrega estatica, debes generar o sobrescribir `runtime-config.js`.
 
 ## Instalacion
 
