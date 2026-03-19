@@ -149,8 +149,15 @@ Notas:
 - `JWT_SECRET` es obligatoria. La API falla al iniciar si no existe.
 - En desarrollo, `pnpm run dev:web` usa el proxy de Angular para redirigir `/api` al backend local.
 - El frontend tambien expone `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` mediante `runtime-config.js`.
-- En builds estaticos, el valor por defecto publicado apunta a `http://127.0.0.1:3000`.
-- Si necesitas otro backend para una entrega estatica, debes generar o sobrescribir `runtime-config.js`.
+- En builds estaticos, si `runtime-config.js` no define `apiBaseUrl`, el frontend usa `/api` como fallback.
+- Si tu demo publica usa frontend y API en dominios distintos, debes publicar `runtime-config.js` con la URL completa de tu API desplegada.
+- Ejemplo:
+
+```js
+window.__SKILLS_TRACKER_CONFIG__ = {
+  apiBaseUrl: 'https://your-api-domain.example.com',
+};
+```
 
 ## Instalacion
 
