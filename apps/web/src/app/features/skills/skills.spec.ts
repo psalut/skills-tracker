@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import { computed } from '@angular/core';
 import { Skills } from './skills';
 import { Skill, UserSkill } from './skill.model';
 import { SkillsService } from './skills.service';
 import { UserSkillsService } from '../user-skills/user-skills.service';
+import { AuthService } from '../../core/auth/auth.service';
 
 function createSkill(name: string, overrides: Partial<Skill> = {}): Skill {
   const slug = name.toLowerCase().replace(/\s+/g, '-');
@@ -50,12 +52,14 @@ describe('Skills', () => {
     createUserSkill = vi.fn(async ({ skillId }: { skillId: string }) =>
       createTrackedSkill(createSkill('Tracked', { id: skillId })),
     ),
+    isAdmin = false,
   }: {
     getSkills?: ReturnType<typeof vi.fn>;
     createSkillRequest?: ReturnType<typeof vi.fn>;
     updateSkill?: ReturnType<typeof vi.fn>;
     getUserSkills?: ReturnType<typeof vi.fn>;
     createUserSkill?: ReturnType<typeof vi.fn>;
+    isAdmin?: boolean;
   } = {}) {
     const skillsService = {
       getSkills,
@@ -68,9 +72,14 @@ describe('Skills', () => {
       createUserSkill,
     };
 
+    const authService = {
+      isAdmin: computed(() => isAdmin),
+    };
+
     await TestBed.configureTestingModule({
       imports: [Skills],
       providers: [
+        { provide: AuthService, useValue: authService },
         { provide: SkillsService, useValue: skillsService },
         { provide: UserSkillsService, useValue: userSkillsService },
       ],
@@ -150,6 +159,36 @@ describe('Skills', () => {
     });
     expect(component.isTracked(docker.id)).toBe(true);
     expect(component.addErrorMessage()).toBeNull();
+  });
+
+  it('hides admin-only catalog actions for non-admin users', async () => {
+    const angular = createSkill('Angular');
+    const { fixture } = await setup({
+      getSkills: vi.fn(async () => [angular]),
+      getUserSkills: vi.fn(async () => []),
+      isAdmin: false,
+    });
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).not.toContain('Edit');
+    expect(compiled.textContent).not.toContain('Deactivate');
+    expect(compiled.querySelector('app-skill-form')).toBeNull();
+  });
+
+  it('shows admin-only catalog actions for admin users', async () => {
+    const angular = createSkill('Angular');
+    const { fixture } = await setup({
+      getSkills: vi.fn(async () => [angular]),
+      getUserSkills: vi.fn(async () => []),
+      isAdmin: true,
+    });
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain('Edit');
+    expect(compiled.textContent).toContain('Deactivate');
+    expect(compiled.querySelector('app-skill-form')).not.toBeNull();
   });
 
   it('treats duplicate add errors as already tracked and keeps the UI consistent', async () => {

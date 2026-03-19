@@ -18,6 +18,7 @@ export class AuthService {
   readonly status = this.authStore.status;
   readonly initialized = this.authStore.initialized;
   readonly isAuthenticated = this.authStore.isAuthenticated;
+  readonly isAdmin = computed(() => this.user()?.role === 'ADMIN');
   readonly isLoading = computed(
     () => this.authStore.isLoading() || !this.authStore.initialized(),
   );

@@ -33,7 +33,7 @@
   <section class="surface section">
     <p class="form-error">{{ loadErrorMessage() }}</p>
   </section>
-  } @else {
+  } @else { @if (isAdmin()) {
   <app-skill-form
     [categories]="categories"
     [parentOptions]="parentOptions()"
@@ -43,8 +43,7 @@
     (save)="saveSkill($event)"
     (cancel)="cancelEdit()"
   />
-
-  @if (addErrorMessage()) {
+  } @if (addErrorMessage()) {
   <section class="surface section">
     <p class="form-error">{{ addErrorMessage() }}</p>
   </section>
@@ -155,6 +154,7 @@
           @if (isAdding(skill.id)) { Adding... } @else if (isTracked(skill.id))
           { Added to my skills } @else { Add to my skills }
         </button>
+        @if (isAdmin()) {
         <button
           type="button"
           class="button skills__action skills__action--secondary"
@@ -173,6 +173,7 @@
           @if (isToggling(skill.id)) { Saving... } @else { {{ skill.isActive ?
           'Deactivate' : 'Activate' }} }
         </button>
+        }
       </div>
     </article>
     }
