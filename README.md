@@ -185,7 +185,7 @@ Para produccion, este repo queda preparado para desplegar la API en Render usand
 
 Configuracion esperada:
 
-- `Build Command`: `pnpm install --frozen-lockfile && pnpm exec nx build api`
+- `Build Command`: `pnpm install --frozen-lockfile && pnpm exec prisma generate && pnpm exec nx build api`
 - `Pre-Deploy Command`: `DATABASE_URL=$DATABASE_DIRECT_URL pnpm exec prisma migrate deploy`
 - `Start Command`: `node dist/api/main.js`
 - `Health Check Path`: `/`
@@ -227,6 +227,29 @@ Por defecto:
 - frontend: `http://localhost:4200`
 - api: `http://localhost:3000`
 - swagger: `http://localhost:3000/api/docs`
+
+## Deploy Del Frontend
+
+Para produccion, la `web` queda preparada para desplegarse en Vercel usando [`vercel.json`](/c:/Users/pablo/Desktop/SKILLS/skills-tracker/vercel.json).
+
+Configuracion esperada:
+
+- `Root Directory`: vacio
+- `Install Command`: `pnpm install --frozen-lockfile`
+- `Build Command`: `node tools/vercel/write-runtime-config.mjs && pnpm exec nx build web`
+- `Output Directory`: `dist/apps/web/browser`
+
+Variable requerida en Vercel:
+
+```env
+WEB_API_BASE_URL="https://your-api-domain.onrender.com"
+```
+
+Notas:
+
+- `WEB_API_BASE_URL` se inyecta en [`apps/web/public/runtime-config.js`](/c:/Users/pablo/Desktop/SKILLS/skills-tracker/apps/web/public/runtime-config.js) durante el build.
+- Si no se define `WEB_API_BASE_URL`, el build de produccion falla de forma explicita para evitar un deploy roto apuntando a `/api`.
+- [`vercel.json`](/c:/Users/pablo/Desktop/SKILLS/skills-tracker/vercel.json) incluye un rewrite a `index.html` para soportar rutas SPA como `/dashboard`, `/skills` y `/profile`.
 
 ## Rutas Principales Del Frontend
 

@@ -1,0 +1,11 @@
+{
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "node tools/vercel/write-runtime-config.mjs && pnpm exec nx build web",
+  "outputDirectory": "dist/apps/web/browser",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
