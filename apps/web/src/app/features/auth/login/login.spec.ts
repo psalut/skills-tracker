@@ -51,8 +51,22 @@ describe('Login', () => {
     expect(authService.login).not.toHaveBeenCalled();
     expect(compiled.textContent).toContain('Enter a valid email address.');
     expect(compiled.textContent).toContain(
-      'Password must have at least 6 characters.',
+      'Password must have at least 8 characters.',
     );
+  });
+
+  it('keeps the form invalid when the password is shorter than 8 characters', async () => {
+    const { component, authService } = await setup();
+
+    component.form.setValue({
+      email: 'pablo@mail.com',
+      password: '1234567',
+    });
+
+    await component.onSubmit();
+
+    expect(component.form.invalid).toBe(true);
+    expect(authService.login).not.toHaveBeenCalled();
   });
 
   it('submits credentials and redirects to the dashboard on success', async () => {

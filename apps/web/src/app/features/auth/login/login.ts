@@ -3,6 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 
+const PASSWORD_MIN_LENGTH = 8;
+
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule],
@@ -19,7 +21,10 @@ export class Login {
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)],
+    ],
   });
 
   async onSubmit(): Promise<void> {
