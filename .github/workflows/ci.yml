@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: test
+      PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
       DATABASE_DIRECT_URL: postgresql://postgres:postgres@127.0.0.1:5432/skills_tracker_test
       NEON_TEST_HOST_HINT: 127.0.0.1:5432
@@ -52,6 +53,12 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+
       - name: Prepare test env
         run: |
           cat <<EOF > .env.test
@@ -83,3 +90,19 @@ jobs:
 
       - name: API e2e
         run: pnpm exec nx e2e api-e2e
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Web e2e
+        run: pnpm exec playwright test apps/web-e2e/src --config apps/web-e2e/playwright.config.ts --project=chromium
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-web-e2e-artifacts
+          path: |
+            dist/playwright/web-e2e-report
+            dist/playwright/web-e2e-results
+          if-no-files-found: ignore

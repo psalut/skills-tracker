@@ -49,6 +49,7 @@ Hoy el proyecto ya incluye:
 - tests e2e frontend con Playwright sobre login, dashboard, skills y profile
 - configuracion centralizada de entorno para `api`, Prisma, `api-e2e` y `web-e2e`
 - runtime config y proxy de desarrollo para controlar el target de la API en entornos locales
+- CI con validacion automatica de formato, lint, tests unitarios, build, `api-e2e` y `web-e2e` en Chromium
 
 ## Stack
 
@@ -148,8 +149,15 @@ Notas:
 - `JWT_SECRET` es obligatoria. La API falla al iniciar si no existe.
 - En desarrollo, `pnpm run dev:web` usa el proxy de Angular para redirigir `/api` al backend local.
 - El frontend tambien expone `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` mediante `runtime-config.js`.
-- En builds estaticos, el valor por defecto publicado apunta a `http://127.0.0.1:3000`.
-- Si necesitas otro backend para una entrega estatica, debes generar o sobrescribir `runtime-config.js`.
+- En builds estaticos, si `runtime-config.js` no define `apiBaseUrl`, el frontend usa `/api` como fallback.
+- Si tu demo publica usa frontend y API en dominios distintos, debes publicar `runtime-config.js` con la URL completa de tu API desplegada.
+- Ejemplo:
+
+```js
+window.__SKILLS_TRACKER_CONFIG__ = {
+  apiBaseUrl: 'https://your-api-domain.example.com',
+};
+```
 
 ## Instalacion
 
@@ -276,6 +284,9 @@ Frontend end-to-end tests:
 ```bash
 pnpm run test:web:e2e
 ```
+
+En CI la suite `web-e2e` se ejecuta en Chromium para mantener el tiempo del pipeline bajo control.
+Cuando un test e2e del frontend falla en CI, GitHub Actions conserva el reporte HTML y los resultados de Playwright como artifacts para facilitar el diagnostico.
 
 En este repo el backend ya tiene cobertura unitaria y e2e. En frontend hay cobertura unitaria sobre los flujos visibles principales y una suite e2e con Playwright para login, dashboard, skills y profile.
 
