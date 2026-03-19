@@ -26,8 +26,8 @@ Resumen por modulo:
 
 - `Users`
 - `GET /users`: solo `ADMIN`
-- `GET /users/:id`: dueño del perfil o `ADMIN`
-- `PATCH /users/:id`: dueño del perfil o `ADMIN`
+- `GET /users/:id`: propietario del perfil o `ADMIN`
+- `PATCH /users/:id`: propietario del perfil o `ADMIN`
 - `Skills`
 - `GET /skills`, `GET /skills/roots`, `GET /skills/:id`: cualquier usuario autenticado
 - `POST /skills`, `PATCH /skills/:id`, `DELETE /skills/:id`, `PATCH /skills/:id/restore`: solo `ADMIN`
