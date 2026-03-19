@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../core/auth/auth.service';
 import { SkillFormComponent } from './components/skill-form.component';
 import {
   CreateSkillRequest,
@@ -27,6 +28,7 @@ type SkillFormPayload = {
   styleUrl: './skills.scss',
 })
 export class Skills implements OnInit {
+  private readonly authService = inject(AuthService);
   private readonly skillsService = inject(SkillsService);
   private readonly userSkillsService = inject(UserSkillsService);
 
@@ -44,6 +46,7 @@ export class Skills implements OnInit {
   readonly addingSkillIds = signal<string[]>([]);
   readonly trackedSkillIds = signal<string[]>([]);
   readonly addErrorMessage = signal<string | null>(null);
+  readonly isAdmin = this.authService.isAdmin;
 
   readonly categories: SkillCategory[] = [
     'FRONTEND',

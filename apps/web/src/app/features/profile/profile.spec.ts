@@ -28,6 +28,7 @@ describe('Profile', () => {
     const { fixture } = await setup({
       id: 'user-1',
       email: 'pablo@mail.com',
+      role: 'USER',
       firstName: 'Pablo',
       lastName: 'Salut',
     });
