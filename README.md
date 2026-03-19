@@ -45,7 +45,10 @@ Hoy el proyecto ya incluye:
 - dashboard y pantallas principales protegidas por login
 - documentacion Swagger para la API
 - tests unitarios y e2e en backend
-- tests frontend iniciales sobre `user-skills`
+- tests unitarios frontend sobre login, guards, dashboard, skills, profile y `user-skills`
+- tests e2e frontend con Playwright sobre login, dashboard, skills y profile
+- configuracion centralizada de entorno para `api`, Prisma, `api-e2e` y `web-e2e`
+- runtime config y proxy de desarrollo para controlar el target de la API en entornos locales
 
 ## Stack
 
@@ -73,9 +76,9 @@ Hoy el proyecto ya incluye:
 - Prettier
 - Husky
 - lint-staged
-- Vitest types para tests frontend
+- Vitest para tests frontend
 - Jest para backend
-- Playwright configurado en el workspace
+- Playwright para e2e frontend
 
 ## Estructura
 
@@ -84,7 +87,7 @@ apps/
   web/       Frontend Angular
   api/       Backend NestJS + Prisma
   api-e2e/   Pruebas e2e de la API
-  web-e2e/   Base de pruebas e2e del frontend
+  web-e2e/   Pruebas e2e del frontend con Playwright
 ```
 
 ## Modelo De Progreso
@@ -143,8 +146,10 @@ Notas:
 
 - `DATABASE_URL` es obligatoria para Prisma.
 - `JWT_SECRET` es obligatoria. La API falla al iniciar si no existe.
-- El frontend usa `/api` por defecto y el `serve` de Angular resuelve eso mediante proxy al backend local.
-- Si necesitas otro backend en runtime, puedes sobrescribir `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` en `runtime-config.js`.
+- En desarrollo, `pnpm run dev:web` usa el proxy de Angular para redirigir `/api` al backend local.
+- El frontend tambien expone `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` mediante `runtime-config.js`.
+- En builds estaticos, el valor por defecto publicado apunta a `http://127.0.0.1:3000`.
+- Si necesitas otro backend para una entrega estatica, debes generar o sobrescribir `runtime-config.js`.
 
 ## Instalacion
 
@@ -272,7 +277,7 @@ Frontend end-to-end tests:
 pnpm run test:web:e2e
 ```
 
-En este repo el backend ya tiene cobertura unitaria y e2e. En frontend hay tests unitarios iniciales y una base de Playwright para seguir ampliando cobertura end-to-end.
+En este repo el backend ya tiene cobertura unitaria y e2e. En frontend hay cobertura unitaria sobre los flujos visibles principales y una suite e2e con Playwright para login, dashboard, skills y profile.
 
 ## Formato Y Calidad
 
@@ -292,10 +297,8 @@ pnpm format:check
 
 Pendientes razonables del proyecto:
 
-- ampliar cobertura frontend
 - endurecer manejo de errores y feedback de UX
-- completar la pantalla de perfil
-- sumar CI automatizada para lint, tests y build
+- ampliar escenarios e2e y flujos negativos mas especificos
 - dockerizar el entorno
 
 ## Objetivo Del Proyecto
