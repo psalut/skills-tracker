@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: skills-tracker-api
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm exec nx build api
+    preDeployCommand: DATABASE_URL=$DATABASE_DIRECT_URL pnpm exec prisma migrate deploy
+    startCommand: node dist/api/main.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_DIRECT_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 1h
+      - key: WEB_ORIGIN
+        sync: false

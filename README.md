@@ -179,6 +179,35 @@ Resetear la base de desarrollo:
 pnpm prisma:reset:dev
 ```
 
+## Deploy De La API
+
+Para produccion, este repo queda preparado para desplegar la API en Render usando el archivo [`render.yaml`](/c:/Users/pablo/Desktop/SKILLS/skills-tracker/render.yaml).
+
+Configuracion esperada:
+
+- `Build Command`: `pnpm install --frozen-lockfile && pnpm exec nx build api`
+- `Pre-Deploy Command`: `DATABASE_URL=$DATABASE_DIRECT_URL pnpm exec prisma migrate deploy`
+- `Start Command`: `node dist/api/main.js`
+- `Health Check Path`: `/`
+
+Variables requeridas en produccion:
+
+```env
+NODE_ENV=production
+DATABASE_URL="postgresql://..."
+DATABASE_DIRECT_URL="postgresql://..."
+JWT_SECRET="replace-with-a-secure-secret"
+JWT_EXPIRES_IN="1h"
+WEB_ORIGIN="https://your-frontend-domain.example.com"
+```
+
+Notas:
+
+- `DATABASE_URL` debe ser la URL pooled de Neon para la aplicacion.
+- `DATABASE_DIRECT_URL` debe ser la URL directa de Neon y solo se usa en el paso de migraciones.
+- Render expone `PORT` automaticamente y la API ya lo soporta.
+- Si todavia no tenes frontend publicado, podes usar temporalmente el dominio final que vayas a asignar o actualizar `WEB_ORIGIN` despues.
+
 ## Ejecutar El Proyecto
 
 Frontend:
