@@ -185,7 +185,7 @@ Para produccion, este repo queda preparado para desplegar la API en Render usand
 
 Configuracion esperada:
 
-- `Build Command`: `pnpm install --frozen-lockfile && pnpm exec nx build api`
+- `Build Command`: `pnpm install --frozen-lockfile && pnpm exec prisma generate && pnpm exec nx build api`
 - `Pre-Deploy Command`: `DATABASE_URL=$DATABASE_DIRECT_URL pnpm exec prisma migrate deploy`
 - `Start Command`: `node dist/api/main.js`
 - `Health Check Path`: `/`
