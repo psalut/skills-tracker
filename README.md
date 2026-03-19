@@ -108,22 +108,43 @@ No hay targets personalizados por skill o por usuario. El progreso se calcula si
 
 ## Variables De Entorno
 
-Crea un archivo `.env` en la raiz del repo.
+Usa:
 
-Ejemplo minimo:
+- `.env.example` para desarrollo local
+- `.env.test.example` para el entorno de tests backend e2e
+
+Variables principales en desarrollo:
 
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/skills_tracker?schema=public"
+DATABASE_URL="postgresql://USER:PASSWORD@127.0.0.1:5432/skills_tracker?schema=public"
+DATABASE_DIRECT_URL="postgresql://USER:PASSWORD@127.0.0.1:5432/skills_tracker?schema=public"
 JWT_SECRET="replace-with-a-secure-secret"
 JWT_EXPIRES_IN="1h"
-PORT="3000"
+API_HOST="127.0.0.1"
+API_PORT="3000"
+WEB_PORT="4200"
+WEB_ORIGIN="http://localhost:4200,http://127.0.0.1:4200"
+```
+
+Variables principales en test:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@127.0.0.1:5432/skills_tracker_test"
+DATABASE_DIRECT_URL="postgresql://USER:PASSWORD@127.0.0.1:5432/skills_tracker_test"
+NEON_TEST_HOST_HINT="127.0.0.1:5432"
+JWT_SECRET="replace-with-a-secure-secret"
+JWT_EXPIRES_IN="1h"
+HOST="127.0.0.1"
+E2E_API_PORT="3333"
+E2E_BASE_URL="http://127.0.0.1:3333"
 ```
 
 Notas:
 
 - `DATABASE_URL` es obligatoria para Prisma.
 - `JWT_SECRET` es obligatoria. La API falla al iniciar si no existe.
-- Para tests e2e tambien se usa `.env.test` cuando `NODE_ENV=test`.
+- El frontend usa `/api` por defecto y el `serve` de Angular resuelve eso mediante proxy al backend local.
+- Si necesitas otro backend en runtime, puedes sobrescribir `window.__SKILLS_TRACKER_CONFIG__.apiBaseUrl` en `runtime-config.js`.
 
 ## Instalacion
 
@@ -150,13 +171,13 @@ pnpm prisma:reset:dev
 Frontend:
 
 ```bash
-pnpm exec nx serve web
+pnpm run dev:web
 ```
 
 Backend:
 
 ```bash
-pnpm exec nx serve api
+pnpm run dev:api
 ```
 
 Por defecto:
@@ -242,13 +263,13 @@ pnpm exec nx test web
 API end-to-end tests:
 
 ```bash
-pnpm exec nx e2e api-e2e
+pnpm run test:api:e2e
 ```
 
 Frontend end-to-end tests:
 
 ```bash
-pnpm exec nx e2e web-e2e
+pnpm run test:web:e2e
 ```
 
 En este repo el backend ya tiene cobertura unitaria y e2e. En frontend hay tests unitarios iniciales y una base de Playwright para seguir ampliando cobertura end-to-end.

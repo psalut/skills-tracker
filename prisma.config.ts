@@ -1,17 +1,12 @@
-import dotenv from 'dotenv';
-import path from 'node:path';
 import { defineConfig, env } from 'prisma/config';
+import {
+  loadWorkspaceEnv,
+  resolveWorkspaceEnvironment,
+} from './tools/env/workspace-env';
 
-const environment = process.env.NODE_ENV ?? 'development';
-
-const envFile =
-  environment === 'test'
-    ? path.resolve(process.cwd(), '.env.test')
-    : environment === 'production'
-      ? path.resolve(process.cwd(), '.env.prod')
-      : path.resolve(process.cwd(), '.env');
-
-dotenv.config({ path: envFile });
+loadWorkspaceEnv({
+  environment: resolveWorkspaceEnvironment(process.env.NODE_ENV),
+});
 
 export default defineConfig({
   schema: 'apps/api/prisma/schema.prisma',

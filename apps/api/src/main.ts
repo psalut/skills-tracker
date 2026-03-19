@@ -1,28 +1,29 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import dotenv from 'dotenv';
-import path from 'node:path';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  getApiHost,
+  getApiPort,
+  getRequiredEnv,
+  getWebOrigins,
+  loadWorkspaceEnv,
+  resolveWorkspaceEnvironment,
+} from '@workspace-env';
 import { AppModule } from './app/app.module';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
 
-const envFile =
-  process.env.NODE_ENV === 'test'
-    ? path.resolve(process.cwd(), '.env.test')
-    : path.resolve(process.cwd(), '.env');
-
-dotenv.config({ path: envFile });
+loadWorkspaceEnv({
+  environment: resolveWorkspaceEnvironment(process.env.NODE_ENV),
+});
 
 async function bootstrap() {
+  getRequiredEnv('DATABASE_URL');
+  getRequiredEnv('JWT_SECRET');
+
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: getWebOrigins(),
     credentials: true,
   });
 
@@ -69,8 +70,14 @@ async function bootstrap() {
 
   SwaggerModule.setup('api/docs', app, documentFactory);
 
-  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-  await app.listen(port);
+  const host = getApiHost();
+  const port = getApiPort();
+
+  if (host) {
+    await app.listen(port, host);
+  } else {
+    await app.listen(port);
+  }
 }
 
 void bootstrap();

@@ -38,6 +38,7 @@ apps/api/prisma/*.db-journal
 .env
 .env.*
 !.env.example
+!.env.test.example
 
 # ================================
 # Logs
