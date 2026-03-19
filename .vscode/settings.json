@@ -10,6 +10,7 @@
     "prisma",
     "user-skills",
     "web",
-    "dashboard"
+    "dashboard",
+    "workspace"
   ]
 }

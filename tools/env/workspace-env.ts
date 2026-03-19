@@ -34,12 +34,16 @@ export function resolveEnvFile(
 
 export function loadWorkspaceEnv(
   options: LoadWorkspaceEnvOptions = {},
-): string {
+): string | undefined {
   const environment =
     options.environment ?? resolveWorkspaceEnvironment(process.env.NODE_ENV);
   const envFile = resolveEnvFile(environment);
 
   if (!existsSync(envFile)) {
+    if (environment === 'production') {
+      return undefined;
+    }
+
     throw new Error(`Missing environment file: ${envFile}`);
   }
 
@@ -100,8 +104,8 @@ export function getNumberEnv(
   return parsed;
 }
 
-export function getApiHost(): string {
-  return getEnv(['API_HOST', 'HOST'], '127.0.0.1')!;
+export function getApiHost(): string | undefined {
+  return getEnv(['API_HOST', 'HOST'])!;
 }
 
 export function getApiPort(): number {

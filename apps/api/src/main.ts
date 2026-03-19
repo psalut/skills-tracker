@@ -72,7 +72,12 @@ async function bootstrap() {
 
   const host = getApiHost();
   const port = getApiPort();
-  await app.listen(port, host);
+
+  if (host) {
+    await app.listen(port, host);
+  } else {
+    await app.listen(port);
+  }
 }
 
 void bootstrap();
