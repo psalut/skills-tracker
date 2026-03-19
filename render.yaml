@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm exec nx build api
+    buildCommand: pnpm install --frozen-lockfile && pnpm exec prisma generate && pnpm exec nx build api
     preDeployCommand: DATABASE_URL=$DATABASE_DIRECT_URL pnpm exec prisma migrate deploy
     startCommand: node dist/api/main.js
     healthCheckPath: /
