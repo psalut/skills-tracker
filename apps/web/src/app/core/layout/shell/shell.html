@@ -1,29 +1,70 @@
 <div class="shell">
   <header class="shell__header">
-    <div class="shell__brand">Skills Tracker</div>
+    <div class="shell__header-inner container">
+      <a routerLink="/dashboard" class="shell__brand">
+        <span class="shell__brand-mark"></span>
+        <span class="shell__brand-text">Skills Tracker</span>
+      </a>
 
-    <div class="shell__actions">
-      <nav class="shell__nav">
-        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-        <a routerLink="/skills" routerLinkActive="active">Skills</a>
-        <a routerLink="/my-skills" routerLinkActive="active">My Skills</a>
-        <a routerLink="/profile" routerLinkActive="active">Profile</a>
-      </nav>
+      <div class="shell__actions">
+        <nav class="shell__nav">
+          <a routerLink="/dashboard" routerLinkActive="active">Home</a>
+          <a routerLink="/skills" routerLinkActive="active">Catalog</a>
+          <a routerLink="/my-skills" routerLinkActive="active">Progress</a>
+          <a routerLink="/profile" routerLinkActive="active">Profile</a>
+        </nav>
 
-      @if (user(); as currentUser) {
-      <div class="shell__session">
-        <span class="shell__user">
-          {{ currentUser.firstName || currentUser.email }}
-        </span>
-        <button type="button" class="shell__logout" (click)="logout()">
-          Logout
-        </button>
+        @if (user(); as currentUser) {
+        <div class="shell__session">
+          <div class="shell__user-copy">
+            <span class="shell__user-label">Signed in as</span>
+            <span class="shell__user">
+              {{ currentUser.firstName || currentUser.email }}
+            </span>
+          </div>
+          <button type="button" class="shell__logout" (click)="logout()">
+            Logout
+          </button>
+        </div>
+        }
       </div>
-      }
     </div>
   </header>
 
   <main class="shell__content">
-    <router-outlet />
+    <div class="shell__content-inner">
+      <router-outlet />
+    </div>
   </main>
+
+  <footer class="shell__footer">
+    <div class="shell__footer-inner container">
+      <div class="shell__footer-brand">
+        <div class="shell__brand shell__brand--footer">
+          <span class="shell__brand-mark"></span>
+          <span class="shell__brand-text">Skills Tracker</span>
+        </div>
+        <p>
+          A focused platform to map capabilities, track growth, and keep the
+          learning roadmap visible.
+        </p>
+      </div>
+
+      <div class="shell__footer-links">
+        <h3>Navigation</h3>
+        <a routerLink="/dashboard">Dashboard</a>
+        <a routerLink="/skills">Skills Catalog</a>
+        <a routerLink="/my-skills">My Skills</a>
+        <a routerLink="/profile">Profile</a>
+      </div>
+
+      <div class="shell__footer-links">
+        <h3>Workspace</h3>
+        <p>
+          Dark UI, shared progress scale, and a cleaner view of the current
+          state.
+        </p>
+      </div>
+    </div>
+  </footer>
 </div>

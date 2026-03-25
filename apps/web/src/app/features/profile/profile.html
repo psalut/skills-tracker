@@ -1,30 +1,45 @@
 @if (user(); as currentUser) {
-<section class="profile">
-  <header class="profile__header">
-    <p class="profile__eyebrow">Session</p>
-    <h1>{{ currentUser.firstName || 'User profile' }}</h1>
+<section class="profile page container">
+  <header class="profile__hero surface section">
+    <p class="profile__eyebrow eyebrow">Session overview</p>
+    <h1 class="page__title">{{ currentUser.firstName || 'User profile' }}</h1>
+    <p class="page__description">
+      Keep the account snapshot visible with the same dark dashboard language as
+      the rest of the app.
+    </p>
     <p class="profile__status">Status: {{ status() }}</p>
   </header>
 
-  <dl class="profile__details">
-    <div>
-      <dt>ID</dt>
-      <dd>{{ currentUser.id }}</dd>
+  <section class="profile__panel surface section">
+    <div class="section-heading profile__heading">
+      <p class="eyebrow">Account data</p>
+      <h2>Current session details</h2>
     </div>
-    <div>
-      <dt>Email</dt>
-      <dd>{{ currentUser.email }}</dd>
-    </div>
-    <div>
-      <dt>First name</dt>
-      <dd>{{ currentUser.firstName || 'Not set' }}</dd>
-    </div>
-    <div>
-      <dt>Last name</dt>
-      <dd>{{ currentUser.lastName || 'Not set' }}</dd>
-    </div>
-  </dl>
+
+    <dl class="profile__details">
+      <div>
+        <dt>ID</dt>
+        <dd>{{ currentUser.id }}</dd>
+      </div>
+      <div>
+        <dt>Email</dt>
+        <dd>{{ currentUser.email }}</dd>
+      </div>
+      <div>
+        <dt>First name</dt>
+        <dd>{{ currentUser.firstName || 'Not set' }}</dd>
+      </div>
+      <div>
+        <dt>Last name</dt>
+        <dd>{{ currentUser.lastName || 'Not set' }}</dd>
+      </div>
+    </dl>
+  </section>
 </section>
 } @else {
-<p>There is no active session.</p>
+<section class="profile page container">
+  <section class="profile__panel surface section">
+    <p>There is no active session.</p>
+  </section>
+</section>
 }

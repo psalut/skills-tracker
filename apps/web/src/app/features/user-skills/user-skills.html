@@ -1,8 +1,8 @@
 <section class="user-skills page container">
   <header class="page__header user-skills__hero surface section">
     <div>
-      <p class="user-skills__eyebrow">My skills</p>
-      <h1 class="page__title">Your current skill map.</h1>
+      <p class="user-skills__eyebrow eyebrow">Personal roadmap</p>
+      <h1 class="page__title">Track the skills that are actively moving.</h1>
       <p class="page__description">
         Review your current level, the shared skill scale, and mastery progress
         for each skill you are tracking.
@@ -24,7 +24,7 @@
   </section>
   }
 
-  <section class="user-skills__stats">
+  <section class="user-skills__stats card-grid">
     <article class="user-skills__stat surface section">
       <span class="user-skills__stat-label">Tracked skills</span>
       <strong class="user-skills__stat-value">{{ stats().total }}</strong>
@@ -42,7 +42,16 @@
   </section>
 
   @if (skills().length) {
-  <section class="user-skills__grid">
+  <section class="section-heading">
+    <p class="eyebrow">Skill cards</p>
+    <h2>Your active learning board</h2>
+    <p>
+      Each tracked skill now uses a denser card treatment with progress,
+      controls, and metadata grouped together.
+    </p>
+  </section>
+
+  <section class="user-skills__grid card-grid">
     @for (userSkill of skills(); track userSkill.id) {
     <article class="user-skills__card surface section">
       <div class="user-skills__card-top">

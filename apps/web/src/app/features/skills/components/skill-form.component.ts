@@ -145,11 +145,11 @@ type SkillFormValue = {
       }
 
       .skill-form__eyebrow {
-        font-size: var(--font-size-sm);
+        font-size: var(--font-size-xs);
         font-weight: var(--font-weight-semibold);
         color: var(--color-primary);
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.18em;
         margin-bottom: var(--space-2);
       }
 
@@ -180,6 +180,7 @@ type SkillFormValue = {
       .skill-form__checkbox input {
         width: 1rem;
         height: 1rem;
+        accent-color: var(--color-primary);
       }
 
       .skill-form__actions {
@@ -189,8 +190,9 @@ type SkillFormValue = {
       }
 
       .skill-form__ghost {
-        background: var(--color-surface-muted);
+        background: rgb(255 255 255 / 0.05);
         color: var(--color-text);
+        border-color: var(--color-border);
       }
 
       @media (min-width: 768px) {
