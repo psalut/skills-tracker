@@ -36,6 +36,9 @@ describe('WarmupService', () => {
     service.trigger();
 
     const request = httpMock.expectOne(`${environment.apiBaseUrl}/warmup`);
-    request.flush('offline', { status: 503, statusText: 'Service Unavailable' });
+    request.flush('offline', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
   });
 });
