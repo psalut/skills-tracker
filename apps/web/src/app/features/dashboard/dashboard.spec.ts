@@ -97,7 +97,10 @@ describe('Dashboard', () => {
       'Angular',
       'Docker',
     ]);
-    expect(compiled.textContent).toContain('Your current learning status');
+    expect(compiled.textContent).toContain(
+      'Discover the shape of your current progress.',
+    );
+    expect(compiled.textContent).toContain('What to push next');
     expect(compiled.textContent).toContain('Angular');
     expect(compiled.textContent).toContain('Docker');
   });

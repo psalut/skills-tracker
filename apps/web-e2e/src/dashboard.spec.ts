@@ -29,8 +29,11 @@ test.describe('dashboard', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Your current learning status',
+        name: 'Discover the shape of your current progress.',
       }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: 'What to push next' }),
     ).toBeVisible();
     await expect(page.getByText('Tracked skills')).toBeVisible();
     await expect(page.getByText('3').first()).toBeVisible();

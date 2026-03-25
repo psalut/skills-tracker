@@ -1,11 +1,32 @@
 <section class="dashboard page container">
   <header class="page__header dashboard__hero surface section">
     <div class="dashboard__hero-content">
-      <p class="dashboard__eyebrow">My skills overview</p>
-      <h1 class="page__title">Your current learning status</h1>
+      <p class="dashboard__eyebrow eyebrow">Progress command center</p>
+      <h1 class="page__title">Discover the shape of your current progress.</h1>
       <p class="page__description">
-        Review what is moving, what needs attention, and how each tracked skill
-        is advancing across the shared mastery progress scale.
+        Review momentum, weak spots, and the skills that are closest to mastery
+        in a darker, more focused workspace.
+      </p>
+
+      <div class="dashboard__hero-actions">
+        <a routerLink="/my-skills" class="button button--primary">
+          Open my skills
+        </a>
+        <a routerLink="/skills" class="button dashboard__ghost-button">
+          Browse catalog
+        </a>
+      </div>
+    </div>
+
+    <div class="dashboard__hero-panel">
+      <p class="dashboard__panel-label">Current pulse</p>
+      <div class="dashboard__hero-metric">
+        <strong>{{ stats()[1].value }}</strong>
+        <span>skills in progress</span>
+      </div>
+      <p>
+        Keep the active roadmap moving and use the cards below to prioritize
+        what needs work first.
       </p>
     </div>
   </header>
@@ -34,13 +55,22 @@
     </div>
   </section>
   } @else {
-  <section class="dashboard__stats">
+  <section class="dashboard__stats card-grid">
     @for (stat of stats(); track stat.label) {
     <article class="dashboard__stat surface section">
       <span class="dashboard__stat-label">{{ stat.label }}</span>
       <strong class="dashboard__stat-value">{{ stat.value }}</strong>
     </article>
     }
+  </section>
+
+  <section class="section-heading">
+    <p class="eyebrow">Priority board</p>
+    <h2>What to push next</h2>
+    <p>
+      These lists mirror the card-heavy layout from the reference while
+      preserving the current data model.
+    </p>
   </section>
 
   <section class="dashboard__grid">

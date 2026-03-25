@@ -108,7 +108,16 @@
   </section>
 
   @if (filteredSkills().length) {
-  <section class="skills__grid">
+  <section class="section-heading">
+    <p class="eyebrow">Catalog view</p>
+    <h2>Browse by card, filter fast</h2>
+    <p>
+      Every skill now lives in a darker card layout closer to the visual rhythm
+      of the reference.
+    </p>
+  </section>
+
+  <section class="skills__grid card-grid">
     @for (skill of filteredSkills(); track trackSkill($index, skill)) {
     <article class="skills__card surface section">
       <div class="skills__card-top">
