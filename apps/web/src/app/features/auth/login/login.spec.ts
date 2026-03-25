@@ -1,18 +1,26 @@
 import { TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Login } from './login';
 import { AuthService } from '../../../core/auth/auth.service';
+import { WarmupService } from '../../../core/warmup/warmup.service';
 
 describe('Login', () => {
   async function setup({
     login = vi.fn(async () => undefined),
     navigateByUrl = vi.fn(async () => true),
+    isConnecting = false,
   }: {
     login?: ReturnType<typeof vi.fn>;
     navigateByUrl?: ReturnType<typeof vi.fn>;
+    isConnecting?: boolean;
   } = {}) {
     const authService = {
       login,
+    };
+
+    const warmupService = {
+      isConnecting: signal(isConnecting),
     };
 
     const router = {
@@ -23,6 +31,7 @@ describe('Login', () => {
       imports: [Login],
       providers: [
         { provide: AuthService, useValue: authService },
+        { provide: WarmupService, useValue: warmupService },
         { provide: Router, useValue: router },
       ],
     }).compileComponents();
@@ -36,6 +45,7 @@ describe('Login', () => {
       fixture,
       component: fixture.componentInstance,
       authService,
+      warmupService,
       router,
     };
   }
@@ -112,5 +122,25 @@ describe('Login', () => {
     expect(component.isSubmitting()).toBe(false);
     expect(component.errorMessage()).toBe('Invalid email or password.');
     expect(compiled.textContent).toContain('Invalid email or password.');
+  });
+
+  it('shows a connecting notice while the database warmup is in progress', async () => {
+    const { fixture } = await setup({ isConnecting: true });
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).toContain(
+      'Connecting to the database for the first time...',
+    );
+  });
+
+  it('hides the connecting notice after the warmup finishes', async () => {
+    const { fixture } = await setup({ isConnecting: false });
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.textContent).not.toContain(
+      'Connecting to the database for the first time...',
+    );
   });
 });

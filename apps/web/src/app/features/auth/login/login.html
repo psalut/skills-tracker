@@ -28,6 +28,12 @@
           <p>Enter your credentials to access your account.</p>
         </div>
 
+        @if (isConnecting()) {
+        <p class="login__status" aria-live="polite">
+          Connecting to the database for the first time...
+        </p>
+        }
+
         <form class="login__form" [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="form-field">
             <label class="form-label" for="email">Email</label>
