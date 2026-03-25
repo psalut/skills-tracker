@@ -15,7 +15,7 @@ test.describe('auth flows', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Sign in to continue tracking your progress.',
+        name: 'Discover your next move and keep every skill visible.',
       }),
     ).toBeVisible();
     await expect(page.getByLabel('Email')).toBeVisible();
@@ -36,7 +36,7 @@ test.describe('auth flows', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Your current learning status',
+        name: 'Discover the shape of your current progress.',
       }),
     ).toBeVisible();
     await expect(page.getByText('Pablo')).toBeVisible();
@@ -69,7 +69,7 @@ test.describe('auth flows', () => {
     await expect(
       page.getByRole('heading', {
         level: 1,
-        name: 'Your current learning status',
+        name: 'Discover the shape of your current progress.',
       }),
     ).toBeVisible();
   });
