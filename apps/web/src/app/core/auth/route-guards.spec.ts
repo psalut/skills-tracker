@@ -8,10 +8,7 @@ describe('route guards', () => {
   const route = {} as never;
   const state = {} as never;
 
-  async function setup(
-    isAuthenticated: boolean,
-    hasStoredToken = false,
-  ) {
+  async function setup(isAuthenticated: boolean, hasStoredToken = false) {
     const authService = {
       isAuthenticated: vi.fn(() => isAuthenticated),
       hasStoredToken: vi.fn(() => hasStoredToken),
