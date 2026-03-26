@@ -64,6 +64,13 @@ export class AuthStore {
     });
   }
 
+  markInitializedWithStoredToken(): void {
+    this.patchState({
+      status: 'idle',
+      initialized: true,
+    });
+  }
+
   markInitializedAnonymous(): void {
     this.patchState({
       user: null,
